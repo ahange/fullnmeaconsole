@@ -31,6 +31,8 @@ dependencies {
   testCompile 'junit:junit:4.8.2'
   compile     'oracle:xmlparser:v2'
   compile     'jdev:rt:1.0'
+  compile     project(':GeomUtils')
+  compile     project(':JavaNauticalAlmanac')
   compile     project(':CoreUtilities')
   compile     project(':ChartComponents')
   compile     project(':PolarSmoother')
