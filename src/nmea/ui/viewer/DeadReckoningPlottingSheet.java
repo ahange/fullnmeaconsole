@@ -591,7 +591,7 @@ public class DeadReckoningPlottingSheet
           gr.drawString("Current speed:" + NMEAContext.DF22.format(speed) + " kts", 10, 25);
           gr.setFont(f);
           // Inject in the cache
-          System.out.println("Current display on " + ((TimeObject)timeComboBox.getSelectedItem()).getLabel() + ":" + NMEAContext.DF3.format(dir) + "\272 @" + NMEAContext.DF22.format(speed) + " kts");
+       // System.out.println("Current display on " + ((TimeObject)timeComboBox.getSelectedItem()).getLabel() + ":" + NMEAContext.DF3.format(dir) + "\272 @" + NMEAContext.DF22.format(speed) + " kts");
           ((Map<Long, NMEADataCache.CurrentDefinition>)NMEAContext.getInstance().getCache().get(NMEADataCache.CALCULATED_CURRENT)).put(bufferLength, new NMEADataCache.CurrentDefinition(bufferLength, new Speed(speed), new Angle360(dir)));
           
           currentDisplay.setDirection(dir);
