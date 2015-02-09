@@ -189,6 +189,11 @@ public class NMEAAnalyzerLandingPanel
           newTitle = "Speed over Ground";
           newUnit  = "kt";
         }
+        else if ("XDR".equals(data))
+        {
+          newTitle = "Relative Humidity";
+          newUnit  = "%";
+        }
         newData = new TreeMap<Date, ScalarValue>();
         Map<Date, Object> datamap = fullData.get(data);
         Set<Date> dates = datamap.keySet();        
@@ -243,6 +248,11 @@ public class NMEAAnalyzerLandingPanel
           {
             NMEAAnalyzer.AtmPressure ap = (NMEAAnalyzer.AtmPressure)datamap.get(d);
             newData.put(d, ap);
+          }
+          else if ("XDR".equals(data))
+          {
+            NMEAAnalyzer.Humidity h = (NMEAAnalyzer.Humidity)datamap.get(d);
+            newData.put(d, h);
           }
         }  
         System.out.println(data + ":Step one completed.");        

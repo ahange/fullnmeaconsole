@@ -245,10 +245,14 @@ function TWDEvolution(cName)     // Canvas name
     
     context.strokeStyle = 'white';
     context.fillStyle = 'white';
+    var prevTime;
     for (var i=0; i<twdBuffer.length; i++)
     {
-      if (Math.floor(twdBuffer[i].time / SEC) % (timeStep / SEC) == 0)
+      if (prevTime === undefined || (prevTime !== undefined &&
+                                     prevTime !== Math.floor(twdBuffer[i].time / SEC) &&
+                                     Math.floor(twdBuffer[i].time / SEC) % (timeStep / SEC) == 0))
       {
+        prevTime = Math.floor(twdBuffer[i].time / SEC);
         var y = canvas.height - (i * (canvas.height / twdBuffer.length));
         context.beginPath();
         context.moveTo(0, y);
@@ -257,6 +261,9 @@ function TWDEvolution(cName)     // Canvas name
         context.stroke();
 
         var txt = new Date(twdBuffer[i].time).format("H:i:s");
+
+    //  console.log(">>> DEBUG >>> For date:" + twdBuffer[i].time + ", displaying " + txt);
+
         context.font = "bold 12px Arial"; // "bold 12px Arial"
         var metrics = context.measureText(txt);
         len = metrics.width;    

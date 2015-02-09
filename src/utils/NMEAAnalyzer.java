@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import java.util.Set;
@@ -21,6 +22,7 @@ import nmea.server.constants.Constants;
 import ocss.nmea.parser.GeoPos;
 import ocss.nmea.parser.OverGround;
 import ocss.nmea.parser.RMC;
+import ocss.nmea.parser.StringGenerator;
 import ocss.nmea.parser.StringParsers;
 import ocss.nmea.parser.Wind;
 
@@ -31,6 +33,8 @@ public class NMEAAnalyzer
 {
   private final static SimpleDateFormat SDF_UT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
   static { SDF_UT.setTimeZone(TimeZone.getTimeZone("etc/UTC")); }
+  
+  private boolean verbose = "true".equals(System.getProperty("analyzer.verbose", "false"));
   
   private LoggedDataSelectedInterface parent = null;
   /*
@@ -63,6 +67,7 @@ public class NMEAAnalyzer
   public static class BatteryVoltage extends ScalarValue { public BatteryVoltage(double d) { super(d); } }
   public static class AtmPressure extends ScalarValue    { public AtmPressure(double d) { super(d); } }
   public static class Depth extends ScalarValue          { public Depth(double d) { super(d); } }  
+  public static class Humidity extends ScalarValue       { public Humidity(double d) { super(d); } }
   
   public Map<String, Integer> getGenericDataMap(String fileName) throws Exception
   {
@@ -100,6 +105,8 @@ public class NMEAAnalyzer
     BufferedReader br = new BufferedReader(new FileReader(file));
     String line = "";
     Date date = null, prevDate = null;
+    Date minDate = null, maxDate = null;
+    String minDateStr = "", maxDateStr = "";
     Date maxGapFrom = null, maxGapTo = null;
     long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
     int nbl = 0;
@@ -123,6 +130,16 @@ public class NMEAAnalyzer
               date = rmc.getRmcDate();
               if (date != null)
               {
+                if (minDate == null || (minDate != null && date.before(minDate)))
+                {
+                  minDate = date;
+                  minDateStr = line;
+                }
+                if (maxDate == null || (maxDate != null && date.after(maxDate)))
+                {
+                  maxDate = date;
+                  maxDateStr = line;
+                }
                 if (prevDate != null && date != null)
                 {
                   long diff = date.getTime() - prevDate.getTime();
@@ -135,7 +152,8 @@ public class NMEAAnalyzer
                   }
                   if (diff < 0)
                   {
-                    System.out.println("** Line " + nbl + ", Backward jump in time: found " + SDF_UT.format(date) + " after " + SDF_UT.format(prevDate) + "...");
+                    if (verbose)
+                      System.out.println("** Line " + nbl + ", Backward jump in time: found " + SDF_UT.format(date) + " after " + SDF_UT.format(prevDate) + "...");
                     date = prevDate; // Reset
                     continue; // Tossion...
                   }
@@ -241,7 +259,9 @@ public class NMEAAnalyzer
           else if ("MMB".equals(prefix))
           {
             double atm = StringParsers.parseMMB(line);
-            if (date != null)              
+        //  if (atm == 0)
+        //    System.out.println("Np pressure in " + line);
+            if (date != null && atm > 0)              
             {
               Map<Date, Object> map = dataMap.get("MMB");
               if (map == null)
@@ -262,6 +282,34 @@ public class NMEAAnalyzer
               dataMap.put("MTA", map);              
             }              
           }
+          else if ("XDR".equals(prefix))
+          {
+            if (date != null)              
+            {
+              List<StringGenerator.XDRElement> xdrData = StringParsers.parseXDR(line);
+              if (xdrData != null)              
+              {
+                Map<Date, Object> map = dataMap.get("XDR");
+                if (map == null)
+                  map = new TreeMap<Date, Object>();
+                double hum = -1;
+                for (StringGenerator.XDRElement xdr : xdrData)
+                {
+                  if (xdr.getTypeNunit().equals(StringGenerator.XDRTypes.HUMIDITY))
+                  {
+                    hum = xdr.getValue();
+                //  if (hum == 0)
+                //    System.out.println("No humidity in " + line);
+                //  System.out.println("XDR:" + hum + "%");
+                    break;
+                  }
+                }
+                if (hum != -1 && hum > 0)
+                  map.put(date, new Humidity(hum));            
+                dataMap.put("XDR", map);    // TODO Narrow this one, depending on the data.     
+              }
+            }              
+          }
           else if ("DPT".equals(prefix))
           {
             double dpt = StringParsers.parseDPT(line, StringParsers.DEPTH_IN_METERS);
@@ -278,7 +326,12 @@ public class NMEAAnalyzer
       }
     }
     br.close();
-    System.out.println("... Processed " + Integer.toString(nbl) + " line(s).");
+    System.out.println("+---------------------------------------------------------");
+    System.out.println("| ... Processed " + Integer.toString(nbl) + " line(s).");
+    System.out.println("| Date span:" + minDate.toString() + ", " + maxDate.toString());
+    System.out.println("| Min: " + minDateStr);
+    System.out.println("| Max: " + maxDateStr);
+    System.out.println("+---------------------------------------------------------");
     parent.setNbRecordProcessed(nbl);
     return dataMap;
   }

@@ -127,10 +127,14 @@ function TWSEvolution(cName)  // Canvas name
     
     context.strokeStyle = 'white';
     context.fillStyle = 'white';
+    var prevTime;
     for (var i=0; i<twsBuffer.length; i++)
     {
-      if (Math.floor(twsBuffer[i].time / SEC) % (timeStep / SEC) == 0)
+      if (prevTime === undefined || (prevTime !== undefined &&
+                                     prevTime !== Math.floor(twsBuffer[i].time / SEC) &&
+                                     Math.floor(twsBuffer[i].time / SEC) % (timeStep / SEC) == 0))
       {
+        prevTime = Math.floor(twsBuffer[i].time / SEC);
         var y = canvas.height - (i * (canvas.height / twsBuffer.length));
         context.beginPath();
         context.moveTo(0, y);

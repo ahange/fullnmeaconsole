@@ -230,8 +230,11 @@ public class NMEAInternalFrame
             {
               double tws = 0d, twd = 0d;
               boolean ok = true;
-              try { tws = ((TrueWindSpeed)cache.get(NMEADataCache.TWS)).getValue(); } catch (Exception ex) { ok = false; }
-              try { twd = ((TrueWindDirection)cache.get(NMEADataCache.TWD)).getValue(); } catch (Exception ex) { ok = false; }
+              synchronized (cache)
+              {
+                try { tws = ((TrueWindSpeed)cache.get(NMEADataCache.TWS)).getValue(); } catch (Exception ex) { ok = false; }
+                try { twd = ((TrueWindDirection)cache.get(NMEADataCache.TWD)).getValue(); } catch (Exception ex) { ok = false; }
+              }
               if (ok)
                 title += (" - Wind: " + WindUtils.getRoseSpeedAndDirection(tws, twd) + " - ");
             }            

@@ -59,7 +59,7 @@ public class DirectionEvolutionDisplay
   private double min = -180d, max = 180d;
   private double step = 45d;
   private String unit = "\272";
-  private DecimalFormat df21 = new DecimalFormat("##0");
+  private DecimalFormat df3 = new DecimalFormat("##0");
 
   private DataPanel    dataPanel    = new DataPanel();
   private HeadingPanel headingPanel = null;
@@ -132,12 +132,14 @@ public class DirectionEvolutionDisplay
     this.add(dataPanel, BorderLayout.CENTER);
     JPanel compassHolder = new JPanel(new BorderLayout());
     compassHolder.add(headingPanel, BorderLayout.CENTER);
-    compassHolder.add(new JPanel(), BorderLayout.EAST);
-    compassHolder.add(new JPanel(), BorderLayout.WEST);
+  //compassHolder.add(new JPanel(), BorderLayout.EAST);
+  //compassHolder.add(new JPanel(), BorderLayout.WEST);
     this.add(compassHolder, BorderLayout.SOUTH);
     headingPanel.setDraggable(false);
     headingPanel.setRoseWidth(180f);
     headingPanel.setWithNumber(false);
+    headingPanel.setLabelStep(30);
+    headingPanel.setDigitFontSize(10);
 
     NMEAContext.getInstance().addNMEAReaderListener(new NMEAReaderListener(Constants.NMEA_SERVER_LISTENER_GROUP_ID, "Direction Evolution")
     {
@@ -280,7 +282,7 @@ public class DirectionEvolutionDisplay
 
   public void setEditMask(DecimalFormat df21)
   {
-    this.df21 = df21;
+    this.df3 = df21;
   }
 
   public void mouseDragged(MouseEvent e)
@@ -310,7 +312,7 @@ public class DirectionEvolutionDisplay
         str += ("Range:" + Utils.setRange(range) + "<br>");
         str += ("From " + aldd.get(0).getDate().toString() + "<br>");
         str += ("To " + aldd.get(aldd.size() - 1).getDate().toString() + "<br>");
-        str += ("index " + index + ":<br><b>" + date.toString() + "</b><br><font color='red'><b>" + df21.format(aldd.get(index).getValue()) + unit + "</b></font>");
+        str += ("index " + index + ":<br><b>" + date.toString() + "</b><br><font color='red'><b>" + df3.format(aldd.get(index).getValue()) + unit + "</b></font>");
         str += "</html>";
         this.setToolTipText(str);
       }
@@ -450,7 +452,7 @@ public class DirectionEvolutionDisplay
           }
           ((Graphics2D)gr).setStroke(origStroke);  
           // Last value
-          String str = df21.format(aldd.get(aldd.size() - 1).getValue()); // + unit;
+          String str = df3.format(aldd.get(aldd.size() - 1).getValue()); // + unit;
           int strWidth  = gr.getFontMetrics(gr.getFont()).stringWidth(str);
           gr.setColor(Color.yellow);
           gr.drawString(str, (this.getWidth() / 2) - (strWidth / 2),  this.getHeight() - 3);

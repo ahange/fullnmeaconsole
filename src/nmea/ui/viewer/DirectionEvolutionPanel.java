@@ -22,6 +22,10 @@ import nmea.ui.viewer.elements.DirectionEvolutionDisplay;
 
 import coreutilities.gui.HeadingPanel;
 
+import java.awt.GridBagConstraints;
+
+import java.awt.Insets;
+
 import ocss.nmea.parser.Angle180;
 import ocss.nmea.parser.Angle360;
 import ocss.nmea.parser.TrueWindDirection;
@@ -54,20 +58,28 @@ public class DirectionEvolutionPanel
     throws Exception
   {
     this.setLayout(flowLayout1);
-    this.setSize(new Dimension(450, 430));
-    this.add(hdgLoggingDisplay, null); // new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-    this.add(cogLoggingDisplay, null); // new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
-    this.add(awaLoggingDisplay, null); // new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
-    this.add(twdLoggingDisplay, null); // new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
-    this.add(cdrLoggingDisplay, null); // new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+    this.setSize(new Dimension(910, 430));
 
+//    this.add(hdgLoggingDisplay, null); // new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+//    this.add(cogLoggingDisplay, null); // new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+//    this.add(awaLoggingDisplay, null); // new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+//    this.add(twdLoggingDisplay, null); // new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+//    this.add(cdrLoggingDisplay, null); // new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+
+    this.add(hdgLoggingDisplay, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+    this.add(cogLoggingDisplay, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+    this.add(awaLoggingDisplay, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+    this.add(twdLoggingDisplay, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+    this.add(cdrLoggingDisplay, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 0, 0), 0, 0));
+
+    /*
     Dimension dim = new Dimension(DirectionEvolutionDisplay.DEFAULT_WIDTH, this.getHeight());
     hdgLoggingDisplay.setPreferredSize(dim);
     cogLoggingDisplay.setPreferredSize(dim);
     awaLoggingDisplay.setPreferredSize(dim);
     twdLoggingDisplay.setPreferredSize(dim);
     cdrLoggingDisplay.setPreferredSize(dim);
-
+    */
     NMEAContext.getInstance().addNMEAReaderListener(new NMEAReaderListener(Constants.NMEA_SERVER_LISTENER_GROUP_ID, "Direction")
       {
         public void dataUpdate()
@@ -179,6 +191,8 @@ public class DirectionEvolutionPanel
           }
         }
       });
+    
+    this.repaint();
   }
   
   public void paintComponent(Graphics gr)
@@ -186,7 +200,8 @@ public class DirectionEvolutionPanel
     ((Graphics2D)gr).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                       RenderingHints.VALUE_TEXT_ANTIALIAS_ON);      
     ((Graphics2D)gr).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                      RenderingHints.VALUE_ANTIALIAS_ON);      
+                                      RenderingHints.VALUE_ANTIALIAS_ON);   
+    
     Dimension dim = new Dimension(DirectionEvolutionDisplay.DEFAULT_WIDTH, this.getHeight());
     hdgLoggingDisplay.setPreferredSize(dim);
     cogLoggingDisplay.setPreferredSize(dim);

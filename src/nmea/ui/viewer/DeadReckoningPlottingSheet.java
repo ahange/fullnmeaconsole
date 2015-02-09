@@ -105,7 +105,15 @@ public class DeadReckoningPlottingSheet
   
   private long timeStep = 0L;
   private JCheckBox smoothCheckBox = new JCheckBox();
-
+  /**
+   *
+   * @param w Panel width
+   * @param h Panel height
+   * @param cL Center Latitude
+   * @param cG Center Longitude
+   * @param ls Latitude Span
+   * @param defaultTimeStep Time step for calculation
+   */
   public DeadReckoningPlottingSheet(int w, 
                                     int h, 
                                     double cL, 
@@ -243,10 +251,18 @@ public class DeadReckoningPlottingSheet
                 utcDate = new UTCHolder((UTCDate)ot);
               else
                 utcDate = new UTCHolder((UTCTime)ot);
-              Angle360 cmg    = (Angle360)cache.get(NMEADataCache.CMG); 
-              GeoPos position = (GeoPos)cache.get(NMEADataCache.POSITION);
-              Speed bsp       = (Speed)cache.get(NMEADataCache.BSP); 
-              Angle360 hdg    = (Angle360)cache.get(NMEADataCache.HDG_TRUE); 
+              
+              Angle360 cmg    = null;
+              GeoPos position = null;
+              Speed bsp       = null;
+              Angle360 hdg    = null;
+              synchronized (cache)
+              {
+                cmg    = (Angle360)cache.get(NMEADataCache.CMG); 
+                position = (GeoPos)cache.get(NMEADataCache.POSITION);
+                bsp       = (Speed)cache.get(NMEADataCache.BSP); 
+                hdg    = (Angle360)cache.get(NMEADataCache.HDG_TRUE); 
+              }
               // From a file: reset?
 //            if (timeBuffer.size() > 1 && ((timeBuffer.get(timeBuffer.size() - 1).getValue().getTime() > utcDate.getValue().getTime())))
               if (timeBuffer != null &&

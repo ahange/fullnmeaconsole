@@ -260,7 +260,10 @@ public class DrawingBoard
     {
       try 
       {
-        leeway = ((Angle180LR) NMEAContext.getInstance().getCache().get(NMEADataCache.LEEWAY)).getValue();
+        synchronized(NMEAContext.getInstance().getCache())
+        {
+          leeway = ((Angle180LR) NMEAContext.getInstance().getCache().get(NMEADataCache.LEEWAY)).getValue();
+        }
       }
       catch (NullPointerException npe)
       {
@@ -321,9 +324,12 @@ public class DrawingBoard
     }
     else
     {
-      twa = ((Angle180) NMEAContext.getInstance().getCache().get(NMEADataCache.TWA)).getValue();      
-      tws = ((TrueWindSpeed) NMEAContext.getInstance().getCache().get(NMEADataCache.TWS)).getValue();      
-      twd = ((TrueWindDirection) NMEAContext.getInstance().getCache().get(NMEADataCache.TWD)).getValue();      
+      synchronized (NMEAContext.getInstance().getCache())
+      {
+        twa = ((Angle180) NMEAContext.getInstance().getCache().get(NMEADataCache.TWA)).getValue();      
+        tws = ((TrueWindSpeed) NMEAContext.getInstance().getCache().get(NMEADataCache.TWS)).getValue();      
+        twd = ((TrueWindDirection) NMEAContext.getInstance().getCache().get(NMEADataCache.TWD)).getValue();      
+      }
     }
     double twX = boatPosX + (tws * (bspLengthAt10 / 10D) * Math.sin(Math.toRadians(twd)));
     double twY = boatPosY - (tws * (bspLengthAt10 / 10D) * Math.cos(Math.toRadians(twd)));

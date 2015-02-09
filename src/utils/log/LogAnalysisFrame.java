@@ -54,7 +54,11 @@ public class LogAnalysisFrame
     if (unit.equals("hPa"))
       displayPanel = new LogAnalysisPanel(unit, 985, 1035, 5, 1);
     else if (unit.equals("V"))
-      displayPanel = new LogAnalysisPanel(unit, 5, 16);
+      displayPanel = new LogAnalysisPanel(unit, 5d, 16d);
+    else if (unit.equals("%"))
+      displayPanel = new LogAnalysisPanel(unit, 0, 100, 10, 10);
+    else if (unit.equals("kt"))
+      displayPanel = new LogAnalysisPanel(unit, 5, 1);
     else
       displayPanel = new LogAnalysisPanel(unit);
     try
@@ -199,6 +203,8 @@ public class LogAnalysisFrame
   {
     this.setTitle(this.titleRoot + " - " + Integer.toString(logdata.size()) + " entries");
     int sw = logdata.size() / 200;
+    if (sw % 2 == 1) // Must be even
+      sw += 1;
     setSmoothWidthValue(sw);
     displayPanel.setSmoothWidth(sw);
     displayPanel.setLogData(logdata, riseAndSet, tz);

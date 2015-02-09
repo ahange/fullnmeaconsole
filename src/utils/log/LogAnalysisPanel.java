@@ -39,7 +39,10 @@ public class LogAnalysisPanel
      extends JPanel
   implements MouseListener, MouseMotionListener
 {
-  @SuppressWarnings("compatibility:2563996868822874868")
+  @SuppressWarnings(
+    {
+      "compatibility:8274515645632370761", "oracle.jdeveloper.java.serialversionuid-stale"
+    })
   public final static long serialVersionUID = 1L;
   
   private transient Map<Date, ScalarValue> logdata = null;
@@ -91,7 +94,10 @@ public class LogAnalysisPanel
   {
     this(unit, base, top, 1, 1);
   }
-
+  public LogAnalysisPanel(String unit, int modLabel, int modUnit)
+  {
+    this(unit, 0D, Double.MIN_VALUE, modLabel, modUnit);
+  }
   public LogAnalysisPanel(String unit, double base, double top, int modLabel, int modUnit)
   {
     this.unit = unit;
@@ -146,7 +152,13 @@ public class LogAnalysisPanel
       Date[] keyArray = keys.toArray(new Date[keys.size()]);
       if (withSmoothing && this.smoothValue == null)
       {
+        
         System.out.println("Smoothing values, width is " + Integer.toString(smoothWidth));
+        if (smoothWidth % 2 == 1)
+        {
+          smoothWidth += 1;
+          System.out.println("   >> Set to " + Integer.toString(smoothWidth));
+        }
         long before = System.currentTimeMillis();
         this.smoothValue = new HashMap<Date, Double>();
         List<ScalarValue> ld = new ArrayList<ScalarValue>();
