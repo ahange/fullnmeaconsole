@@ -297,6 +297,11 @@ public class Utils
    */
   public static void parseAndCalculate(String key, String value, NMEADataCache ndc)
   {
+    if ("true".equals(System.getProperty("nmea.channel.test", "false")))
+    {
+      System.out.println(value);
+      return;
+    }
     if (!StringParsers.validCheckSum(value))
     {
       System.out.println("Rejecting [" + value + "]");
