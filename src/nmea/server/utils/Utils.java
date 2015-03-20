@@ -6,13 +6,17 @@ import nmea.server.ctx.NMEADataCache;
 import nmea.ui.widgets.DeclinationPanel;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GradientPaint;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -1113,6 +1117,66 @@ public class Utils
     g.fillPolygon(head);
     
     if (g != null) g.setColor(orig);
+  }
+
+  public static void drawWind(Graphics gr, 
+                              int x, 
+                              int y, 
+                              double speed, // in knots
+                              double dir, // in degrees
+                              Color windColor,
+                              int len)
+  {
+    int discSize = 4; // Smallest
+
+    gr.setColor(windColor);  
+    gr.fillOval(x - discSize / 2, y - discSize / 2, discSize, discSize);
+
+    int arrowLength = len; // 20;
+    double dTWD = Math.toRadians(dir);
+    int arrowX = (int) ((double) arrowLength * Math.sin(dTWD));
+    int arrowY = - (int) ((double) arrowLength * Math.cos(dTWD)); 
+   
+    gr.drawLine(x, y, x + arrowX, y + arrowY);
+    
+    // Fethers
+    if (speed > 0.0D)
+    {
+      int iTws = (int) Math.round(speed);
+      int origin;
+      for (origin = arrowLength; iTws >= 50; origin -= 5)
+      {
+        iTws -= 50;
+        int featherStartX = x + (int) ((double) origin * Math.sin(dTWD));
+        int featherStartY = y - (int) ((double) origin * Math.cos(dTWD));
+        int featherEndX = featherStartX + (int) (10D * Math.sin(dTWD + Math.toRadians(60D)));
+        int featherEndY = featherStartY - (int) (10D * Math.cos(dTWD + Math.toRadians(60D)));
+        int featherStartX2 = x + (int) ((double) (origin - 5) * Math.sin(dTWD));
+        int featherStartY2 = y - (int) ((double) (origin - 5) * Math.cos(dTWD));
+
+        gr.fillPolygon(new Polygon(new int[]{ featherStartX, featherEndX, featherStartX2 }, 
+                                   new int[]{ featherStartY, featherEndY, featherStartY2 }, 
+                                   3));
+      }
+      while (iTws >= 10)
+      {
+        iTws -= 10;
+        int featherStartX = x + (int) ((double) origin * Math.sin(dTWD));
+        int featherStartY = y - (int) ((double) origin * Math.cos(dTWD));
+        int featherEndX = featherStartX + (int) (7D * Math.sin(dTWD + Math.toRadians(60D)));
+        int featherEndY = featherStartY - (int) (7D * Math.cos(dTWD + Math.toRadians(60D)));
+        gr.drawLine(featherStartX, featherStartY, featherEndX, featherEndY);
+        origin -= 3;
+      }
+      if (iTws >= 5)
+      {
+        int featherStartX = x + (int) ((double) origin * Math.sin(dTWD));
+        int featherStartY = y - (int) ((double) origin * Math.cos(dTWD));
+        int featherEndX = featherStartX + (int) (4D * Math.sin(dTWD + Math.toRadians(60D)));
+        int featherEndY = featherStartY - (int) (4D * Math.cos(dTWD + Math.toRadians(60D)));
+        gr.drawLine(featherStartX, featherStartY, featherEndX, featherEndY);
+      }
+    }
   }
   
   public static void drawHollowArrow(Graphics2D g, Point from, Point to, Color c)

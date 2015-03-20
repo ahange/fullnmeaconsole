@@ -141,7 +141,7 @@ public class CustomTCPReader extends NMEAReader implements DataReader
       be.printStackTrace();   
       manageError(be);
     }
-    catch (SocketException se)
+    catch (final SocketException se)
     {
 //    se.printStackTrace();
       if (se.getMessage().indexOf("Connection refused") > -1)
@@ -150,27 +150,48 @@ public class CustomTCPReader extends NMEAReader implements DataReader
         System.out.println("Reset (2)");
       else
       {
-        if (se instanceof ConnectException && "Connection timed out: connect".equals(se.getMessage())) // : Connection timed out: connect)
+        boolean tryAgain = false;
+        if (se instanceof ConnectException && "Connection timed out: connect".equals(se.getMessage()))
+          tryAgain = true;
+        else if (se instanceof ConnectException && "Network is unreachable: connect".equals(se.getMessage())) 
+          tryAgain = true;
+        else if (se instanceof ConnectException) // Et hop!
+        {
+          tryAgain = false;
+          System.err.println(se.getMessage());
+        }
+        else 
+        {
+          tryAgain = false;
+          System.err.println(se.getMessage());
+        }
+        
+        if (tryAgain)
         {
           // Wait and try again
           try
           {
-            Thread userThread = new Thread("TCPReader")
-            {
-              public void run()
-              {
-                try { JOptionPane.showMessageDialog(null, "Timeout on TCP.\nWill re-try to connect again in 10s", "TCP Connection", JOptionPane.WARNING_MESSAGE);  }
-                catch (Exception ex)
-                {
-                  System.out.println("Timeout on TCP.\nWill re-try to connect again in 10s");
-                }
-              }
-            };
-            userThread.start();
-//          System.out.println("Timeout on TCP. Re-trying to connect in 10s");
+//            Thread userThread = new Thread("TCPReader")
+//            {
+//              public void run()
+//              {
+//                System.out.println("TCP Thread...");
+//                try 
+//                { 
+//                  System.out.println(se.getMessage() + ", Timeout on TCP.\nWill re-try to connect again...");
+////                JOptionPane.showMessageDialog(null, se.getMessage() + ", Timeout on TCP.\nWill re-try to connect again...", "TCP Connection", JOptionPane.WARNING_MESSAGE);  
+//                }
+//                catch (Exception ex)
+//                {
+//                  System.out.println("Timeout on TCP.\nWill re-try to connect again...");
+//                }
+//              }
+//            };
+//            userThread.start();
+            System.out.println("Timeout on TCP. Will Re-try to connect in 1s");
             closeReader();
-            Thread.sleep(10000L);
-            System.out.println("Re-trying now.");
+            Thread.sleep(1000L);
+            System.out.println("Re-trying now. (from " + this.getName() + ")");
             read();
           }
           catch (Exception ex)
@@ -217,6 +238,8 @@ public class CustomTCPReader extends NMEAReader implements DataReader
   
   public static void main(String[] args)
   {
+    String host = "192.168.1.1";
+    int port = 7001; // 2947
     try
     {
       List<NMEAListener> ll = new ArrayList<NMEAListener>();
@@ -230,15 +253,25 @@ public class CustomTCPReader extends NMEAReader implements DataReader
       };
       ll.add(nl);
       
-//    CustomTCPReader ctcpr = new CustomTCPReader(ll, "192.168.0.124", 2947);
-      CustomTCPReader ctcpr = new CustomTCPReader(ll, "localhost", 2947);
-      // Works fine with the SailMail rebroadcast
-//    CustomTCPReader ctcpr = new CustomTCPReader(ll, "theketch-lap.mshome.net", 7001);
-      ctcpr.read();
+      boolean keepTrying = true;
+      while (keepTrying)
+      {
+        CustomTCPReader ctcpr = new CustomTCPReader(ll, host, port);
+        System.out.println(new Date().toString() + ": New " + ctcpr.getClass().getName() + " created.");
+
+        try { ctcpr.read(); }
+        catch (Exception ex)
+        {
+          System.err.println(ex.getMessage());
+          ctcpr.closeReader();
+          long howMuch = 1000L;
+          System.out.println("Will try to reconnect in " + Long.toString(howMuch) + "ms.");
+          try { Thread.sleep(howMuch); } catch (InterruptedException ie) {}
+        }
+      }
     }
     catch (Exception e)
     {
-      // TODO: Add catch code
       e.printStackTrace();
     }
   }

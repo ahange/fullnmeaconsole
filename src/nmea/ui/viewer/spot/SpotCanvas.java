@@ -295,10 +295,20 @@ public class SpotCanvas
       {
         int xPos = (int)(i * xScale);
         double direction = this.spotLines.get(i).getTwd();
-        int x = (xPos) + (int) ((radius) * Math.cos(Math.toRadians(direction - 90)));
-        int y = (this.getHeight() / 2) + (int) ((radius) * Math.sin(Math.toRadians(direction - 90)));
-        //  g.drawLine((dim.width / 2), (dim.height / 2), x, y);
-        Utils.drawArrow((Graphics2D)gr, new Point(xPos, (this.getHeight() / 2)), new Point(x, y), Color.blue, 12);    
+        double speed     = this.spotLines.get(i).getTws();
+        if (false)
+        {
+          int x = (xPos) + (int) ((radius) * Math.cos(Math.toRadians(direction - 90)));
+          int y = (this.getHeight() / 2) + (int) ((radius) * Math.sin(Math.toRadians(direction - 90)));
+          //  g.drawLine((dim.width / 2), (dim.height / 2), x, y);
+          Utils.drawArrow((Graphics2D)gr, new Point(xPos, (this.getHeight() / 2)), new Point(x, y), Color.blue, 12);    
+        }
+        else
+        {
+          int x = xPos;
+          int y = (this.getHeight() / 2);
+          Utils.drawWind(gr, x, y, speed, direction, Color.blue, 20);
+        }
       }
       ((Graphics2D) gr).setStroke(origStroke);
 
