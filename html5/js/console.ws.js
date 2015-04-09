@@ -219,7 +219,7 @@ var setValues = function(doc)
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWD...");
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWA...");
 //    displayTWD.animate(0.0);
       displayTWD.setValue(0.0);
     }
@@ -227,7 +227,9 @@ var setValues = function(doc)
     {
       var tws = parseFloat(json.tws.toFixed(2));
 //    displayTWS.animate(tws);
+      displayTWS.setSecondaryValue("F" + getBeaufort(tws));
       displayTWS.setValue(tws);
+      
       displayOverview.setTWS(tws);
       jumboTWS.setValue(tws.toFixed(1));
       twsEvolution.addTWS({ "speed": tws, "time": (new Date()).getTime() });
@@ -521,4 +523,15 @@ var lpad = function(str, pad, len)
   while (str.length < len)
     str = pad + str;
   return str;
+};
+
+var getBeaufort = function(ws)
+{
+  var BEAUFORT_SCALE = [ 0, 1, 4, 7, 11, 16, 22, 28, 34, 41, 48, 56, 64 ];
+  var b = 0;
+  while (ws > BEAUFORT_SCALE[b]) 
+  {
+    b++;
+  }
+  return (b>0 ? b - 1 : b);
 };

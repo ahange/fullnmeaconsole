@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta charset="windows-1252"-->
+    <!--meta charset="iso-8859-1"-->
+    <!--meta charset="utf-8"-->
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <title>NMEA Console Data</title>
+    <link rel="stylesheet" href="../css/stylesheet.css" type="text/css"/>
+    <style type="text/css">
+      .displayCanvas {
+        border: 1px solid #9C9898;
+        opacity:0.75;
+      }
+    </style>
+    <link rel="stylesheet" href="../css/black.css" type="text/css" id="theme"/>
+    <script type="text/javascript" src="../js/date.proto.js"></script>
+    <script type="text/javascript" src="../js/widgets/TWDEvolution.js"></script>
+    <script type="text/javascript" src="console.testTWD.js"></script>
+    <script type="text/javascript">
+  window.onload = function()
+  {
+    init();
+//  console.log("Evaluating window size");
+    resizeComponents();
+  };
+  
+  window.onresize = function()
+  {
+//  console.log("Re-evaluating window size");
+    resizeComponents();
+  };
+  
+  var resizeComponents = function()
+  {
+    var ww = window.innerWidth;
+    var wh = window.innerHeight;
+    
+    var totalWidth = TOTAL_WIDTH; // in console.js
+    
+    // Canvases & iFrame
+    // TWD
+    document.getElementById('twdEvolutionCanvas').height = wh * 0.8;
+  };
+  
+  var changeTheme = function()
+  {
+    var cssLink = document.getElementById("theme");
+    var themeList = document.getElementById("theme-select");
+    var selected = themeList.options[themeList.selectedIndex].value;
+    cssLink.href = 'css/' + selected + '.css';
+  };
+  
+    </script>
+  </head>
+  <body bgcolor="black">
+    <!--table width="98%">
+      <tr>
+        <td><h2 style="font-size: 12pt; font-family: Verdana, Arial, Helvetica, Geneva, Swiss, SunSans-Regular">NMEA Console Data</h2></td>
+      </tr>
+    </table-->
+    <div id="twd-evolution" style="display: inline;">
+      <p align="center">
+        <table align="center" cellspacing="10">
+          <tr>
+            <td valign="top" align="right">
+              <div id="life-span">
+              </div>
+            </td>
+            <td align="center" valign="top" rowspan="6">
+              <canvas id="twdEvolutionCanvas" height="500" width="300" class="displayCanvas"></canvas>
+            </td>
+          </tr>
+        </table>
+      </p>
+    </div>
+    <div id="err-mess"></div>
+  </body>
+</html>

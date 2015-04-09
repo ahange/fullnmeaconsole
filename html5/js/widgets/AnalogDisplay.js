@@ -24,6 +24,7 @@ function AnalogDisplay(cName,                     // Canvas Name
     startValue = 0;
     
   var scale = dSize / 100;
+  var secondaryValue;
 
   var canvasName = cName;
   var displaySize = dSize;
@@ -114,6 +115,11 @@ function AnalogDisplay(cName,                     // Canvas Name
     }
   };
 
+  function setSecondaryValue(val)
+  {
+    secondaryValue = val;  
+  }
+  
   function drawDisplay(displayCanvasName, displayRadius, displayValue)
   {
     var digitColor = 'LightBlue';
@@ -224,6 +230,23 @@ function AnalogDisplay(cName,                     // Canvas Name
     context.strokeStyle = 'black';
     context.strokeText(text, (canvas.width / 2) - (len / 2), ((radius * .75) + 10)); // Outlined  
     context.closePath();
+    
+    if (secondaryValue !== undefined) 
+    {
+      text = secondaryValue;
+      len = 0;
+      context.font = "bold " + Math.round(scale * 32) + "px Arial"; // "bold 32px Arial"
+      metrics = context.measureText(text);
+      len = metrics.width;
+    
+      context.beginPath();
+      context.fillStyle = 'LightGreen';
+      context.fillText(text, (canvas.width / 2) - (len / 2), ((radius * .75) + 20));
+      context.lineWidth = 1;
+      context.strokeStyle = 'black';
+      context.strokeText(text, (canvas.width / 2) - (len / 2), ((radius * .75) + 20)); // Outlined  
+      context.closePath();      
+    }
   
     // Hand
     context.beginPath();
