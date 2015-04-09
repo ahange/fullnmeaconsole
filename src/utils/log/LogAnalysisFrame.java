@@ -45,6 +45,7 @@ public class LogAnalysisFrame
   private JLabel smoothWidthLabel = new JLabel();
   private JButton applySmoothWidthButton = new JButton();
   private String titleRoot = "";
+  private JCheckBox plotMinMaxCheckBox = new JCheckBox();
 
   public LogAnalysisFrame(LogAnalysis parent, String title, String unit)
   {
@@ -90,6 +91,7 @@ public class LogAnalysisFrame
     JButton narrowerButton = new JButton("> <");
     narrowerButton.setToolTipText("Make the graph narrower");
     bottomPanel.add(narrowerButton, null);
+    bottomPanel.add(plotMinMaxCheckBox, null);
     widerButton.addActionListener(new ActionListener()
     {
       @Override
@@ -106,8 +108,8 @@ public class LogAnalysisFrame
         adjustSize(NARROWER);
       }
     });
-    
-    final JCheckBox withRawData    = new JCheckBox("Raw Data");
+
+    final JCheckBox withRawData = new JCheckBox("Raw Data");
     final JCheckBox withSmoothData = new JCheckBox("Smooth Data");
     bottomPanel.add(withRawData, null);
     bottomPanel.add(withSmoothData, null);
@@ -150,6 +152,14 @@ public class LogAnalysisFrame
       {
         displayPanel.setWithSmoothData(withSmoothData.isSelected());
         displayPanel.repaint();
+      }
+    });
+    plotMinMaxCheckBox.setText("Plot Min/Max");
+    plotMinMaxCheckBox.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        plotMinMaxCheckBox_actionPerformed(e);
       }
     });
     applySmoothWidthButton.setText("Apply");
@@ -213,5 +223,10 @@ public class LogAnalysisFrame
   public void setTimeZone(String tz)
   {
     displayPanel.setTimeZone(tz);
+  }
+
+  private void plotMinMaxCheckBox_actionPerformed(ActionEvent e)
+  {
+    displayPanel.setPlotMinMax(plotMinMaxCheckBox.isSelected());
   }
 }

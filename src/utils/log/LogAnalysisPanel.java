@@ -49,6 +49,7 @@ public class LogAnalysisPanel
   private transient Map<Long, Calendar[]> riseAndSet = null;
   private Date minDate = null, maxDate = null;
   private double minValue = Double.MAX_VALUE, maxValue = Double.MIN_VALUE;
+  private Date minValueDate = null, maxValueDate = null;
   private final static NumberFormat VALUE_FMT = new DecimalFormat("#0.00");
   private final static DateFormat DATE_FMT = new SimpleDateFormat("EEE dd-MMM-yyyy'\n'HH:mm Z");
 //static { DATE_FMT.setTimeZone(TimeZone.getTimeZone("etc/UTC")); }
@@ -59,6 +60,8 @@ public class LogAnalysisPanel
   
   private boolean withRawData = true, withSmoothData = false;
   private boolean narrow = false;
+  private boolean plotMinMax = false;
+
   private double baseScaleValue = 0D;
   private double topScaleValue  = Double.MIN_VALUE;
 
@@ -72,6 +75,12 @@ public class LogAnalysisPanel
     this.withSmoothData = withSmoothData;
   }
   
+  public void setPlotMinMax(boolean plotMinMax)
+  {
+    this.plotMinMax = plotMinMax;
+    repaint();
+  }
+
   public void setNarrow(boolean b)
   {
     this.narrow = b;
@@ -212,8 +221,18 @@ public class LogAnalysisPanel
             if (key.after(maxDate))
               maxDate = key;
           }
-          minValue = Math.min(minValue, value.getValue());
-          maxValue = Math.max(maxValue, value.getValue());
+          if (value.getValue() < minValue)
+          {
+            minValue = value.getValue();
+            minValueDate = key;
+          }
+          if (value.getValue() > maxValue)
+          {
+            maxValue = value.getValue();
+            maxValueDate = key;
+          }          
+//        minValue = Math.min(minValue, value.getValue());
+//        maxValue = Math.max(maxValue, value.getValue());
         }   
   //    minValue = 0;
       }
@@ -304,6 +323,11 @@ public class LogAnalysisPanel
         }
       }
       
+      // Min & Max values, label
+      g2d.setColor(Color.black);
+      String minMax = "Min:" + VALUE_FMT.format(minValue) + ", Max:" + VALUE_FMT.format(maxValue);
+      g2d.drawString(minMax, 20, 20);
+      
       g2d.setColor(Color.red);
       Point previous = null;      
       // Raw Data
@@ -362,6 +386,30 @@ public class LogAnalysisPanel
         int y = /* this.getHeight() - */ mouseYValue;
         g.fillOval(mouseX - 2, y - 2, 4, 4);
         postit(g, postit, mouseX, mouseYValue + 20, Color.black, Color.cyan, 0.50f);
+      }
+            
+      if (plotMinMax && minValueDate != null && maxValueDate != null)
+      {
+        g2d.setColor(Color.darkGray);
+        long timeoffset = minValueDate.getTime() - minDate.getTime();
+        int x = (int)(this.getWidth() * ((float)timeoffset / (float)timespan));
+        g2d.drawLine(x, 0, x, this.getHeight());
+        String mess = "Min";
+        int l = g.getFontMetrics(g2d.getFont()).stringWidth(mess);
+        g2d.drawString(mess, x - (l/2), 20);
+        mess = VALUE_FMT.format(minValue);
+        l = g.getFontMetrics(g2d.getFont()).stringWidth(mess);
+        g2d.drawString(mess, x - (l/2), 32);
+        
+        timeoffset = maxValueDate.getTime() - minDate.getTime();
+        x = (int)(this.getWidth() * ((float)timeoffset / (float)timespan));
+        g2d.drawLine(x, 0, x, this.getHeight());
+        mess = "Max";
+        l = g.getFontMetrics(g2d.getFont()).stringWidth(mess);
+        g2d.drawString(mess, x - (l/2), 20);
+        mess = VALUE_FMT.format(maxValue);
+        l = g.getFontMetrics(g2d.getFont()).stringWidth(mess);
+        g2d.drawString(mess, x - (l/2), 32);
       }
     }
   }
