@@ -36,6 +36,8 @@ import nmea.ui.viewer.spot.utils.SpotParser.SpotLine;
 
 import ocss.nmea.parser.GeoPos;
 
+import ocss.nmea.utils.WindUtils;
+
 import polarmaker.polars.smooth.gui.components.widgets.TWSPanel;
 
 public class SpotCanvas
@@ -121,6 +123,8 @@ public class SpotCanvas
       tt += "<br>";
 //    tt += ("WIND:" + this.spotLines.get(i).getTws() + "kts @ " + this.spotLines.get(i).getTwd() + "\272");
       tt += ("WIND:" + TWS_FORMAT.format(smoothedTWS) + "kts @ " + TWD_FORMAT.format(smoothedTWD) + "\272");
+      tt += "<br>";
+      tt += ("F" + WindUtils.getBeaufort(smoothedTWS) + " - " + WindUtils.getRoseDir(smoothedTWD));
       tt += "<br>";
 //    tt += ("PRMSL:" + this.spotLines.get(i).getPrmsl() + "hPa");
       tt += ("PRMSL:" + PRMSL_FORMAT.format(smoothedPRMSL) + "hPa");
