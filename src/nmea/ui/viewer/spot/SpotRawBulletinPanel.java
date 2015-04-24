@@ -7,9 +7,13 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+
+import java.io.FilenameFilter;
 
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -117,7 +121,6 @@ public class SpotRawBulletinPanel
   private void scanAirmailInbox_actionPerformed(ActionEvent e)
   {
     final SimpleDateFormat MESS_DATE_FMT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    final Format MESS_NUM_FMT = new DecimalFormat("#0000");
     MESS_DATE_FMT.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
     
     String airmailLocation = System.getProperty("airmail.location");
@@ -136,59 +139,85 @@ public class SpotRawBulletinPanel
     {
       throw new RuntimeException(airmailLocation + " does not exist, or is not a directory. Please see your preferences (SailMail)");
     }
-    int messnum = 0;
     File inboxDir = new File(airmailDir, "Inbox"); 
     if (!inboxDir.exists())
     {
       System.out.println(inboxDir.toString() + " does not exist. Exiting");
       spotBulletinEditorPane.setText(inboxDir.toString() + " does not exist. Found no inbox.");
-//    parseContent(str);
       return;
     }
-    Pattern pattern = Pattern.compile("([0-9]*)_" + airmailId.toUpperCase() + ".msg");
     
-    File[] messages = inboxDir.listFiles();
+    final String XDATE_HEADER    = "X-Date:";
+    final String XSTATUS_HEADER  = "X-Status:";
+    final String SUBJECT_HEADER  = "Subject:";
+    
+    File[] messages = inboxDir.listFiles(new FilenameFilter()
+    {
+      @Override
+      public boolean accept(File file, String string)
+      {
+        return string.endsWith(".msg");
+      }
+    });
+    String messContent = "";
+    Date mostRecent = null;
     for (File mess : messages)
     {
       if (mess.isFile())
       {
-        String messName = mess.getName();
-        Matcher matcher = pattern.matcher(messName);
-        while (matcher.find())
-        {  
-          String match = matcher.group(1).trim();
-          messnum = Math.max(messnum, Integer.parseInt(match));
-        }        
+        try
+        {
+          BufferedReader br = new BufferedReader(new FileReader(mess));     
+          String xDate   = "";
+          String xStatus = "";
+          String subject = "";
+          String content = "";
+          boolean inContent   = false;
+          boolean keepReading = true;
+          while (keepReading)
+          {
+            String line = br.readLine();
+            if (line == null)
+              keepReading = false;
+            else
+            {
+              if (inContent)
+                content += (line + "\n");
+              else
+              {
+                if (line.trim().length() == 0)
+                {
+                  if (xStatus.trim().equals("New"))
+                    inContent = true;
+                  else
+                    keepReading = false;
+                }
+                else if (line.startsWith(XDATE_HEADER))
+                  xDate = line.substring(XDATE_HEADER.length()).trim();
+                else if (line.startsWith(XSTATUS_HEADER))
+                  xStatus = line.substring(XSTATUS_HEADER.length()).trim();
+                else if (line.startsWith(SUBJECT_HEADER))
+                  subject = line.substring(SUBJECT_HEADER.length()).trim();
+              }
+            }
+          }
+          br.close();
+          Date messDate = MESS_DATE_FMT.parse(xDate);
+          if (mostRecent == null || messDate.after(mostRecent)) // TODO Filter on the subject
+          {
+            System.out.println("Message Date:" + xDate);
+            mostRecent = messDate;
+            messContent = content;
+          }
+        }
+        catch (Exception ex)
+        {
+          ex.printStackTrace();
+        }
       }
     }
-    messnum += 1;
-    String messageName = MESS_NUM_FMT.format(messnum) + "_" + airmailId;
-    
-    String strReq = "";
-    String messageContent = 
-      "X-Priority: 4\r\n" + 
-      "X-MID: " + messageName + "\r\n" +
-      "X-Status: Posted\r\n" + 
-      "To: query@saildocs.com\r\n" + 
-      "X-Type: Email; Outmail\r\n" + 
-      "Subject: Saildocs Request\r\n" + 
-      "X-Via: Sailmail\r\n" + 
-      "X-Date: " + MESS_DATE_FMT.format(new Date()) + "\r\n" + 
-      "\r\n" + 
-      strReq;
-    // Read the outbox
-    System.out.println("Message:\n" + messageContent);
-    try
-    {
-      BufferedWriter br = new BufferedWriter(new FileWriter(new File(inboxDir, messageName + ".msg")));
-      br.write(messageContent);
-      br.close();
-      // TODO Put the content in the right place
-      spotBulletinEditorPane.setText("Et toc!");
-    }
-    catch (Exception ex)
-    {
-      ex.printStackTrace();
-    }
+    System.out.println("Message:\n" + messContent);
+    // Put the content in the right place
+    spotBulletinEditorPane.setText(messContent);
   }  
 }
