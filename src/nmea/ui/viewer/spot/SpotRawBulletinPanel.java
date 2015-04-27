@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -161,6 +162,8 @@ public class SpotRawBulletinPanel
     });
     String messContent = "";
     Date mostRecent = null;
+    
+    List<InboxMessage> messList = new ArrayList<InboxMessage>();
     for (File mess : messages)
     {
       if (mess.isFile())
@@ -205,6 +208,7 @@ public class SpotRawBulletinPanel
           Date messDate = MESS_DATE_FMT.parse(xDate);
           if (mostRecent == null || messDate.after(mostRecent)) // TODO Filter on the subject
           {
+            messList.add(new InboxMessage(subject, content, messDate));
             System.out.println("Message Date:" + xDate);
             mostRecent = messDate;
             messContent = content;
@@ -216,8 +220,42 @@ public class SpotRawBulletinPanel
         }
       }
     }
-    System.out.println("Message:\n" + messContent);
+    if (messList.size() > 1)
+    {
+      // TODO Prompt the user to choose the message
+      
+    }
+    System.out.println("Message:\n" + messContent);    
     // Put the content in the right place
     spotBulletinEditorPane.setText(messContent);
   }  
+  
+  private static class InboxMessage
+  {
+    private String subject;
+    private String content;
+    private Date date;
+    
+    public InboxMessage(String subject, String content, Date date)
+    {
+      this.subject = subject;
+      this.content = content;
+      this.date = date;
+    }
+
+    public String getSubject()
+    {
+      return subject;
+    }
+
+    public String getContent()
+    {
+      return content;
+    }
+
+    public Date getDate()
+    {
+      return date;
+    }
+  }
 }
