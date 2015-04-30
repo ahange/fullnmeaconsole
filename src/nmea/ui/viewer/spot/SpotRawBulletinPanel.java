@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -150,6 +151,9 @@ public class SpotRawBulletinPanel
     final String XDATE_HEADER    = "X-Date:";
     final String XSTATUS_HEADER  = "X-Status:";
     final String SUBJECT_HEADER  = "Subject:";
+    final String SUBJECT_PREFIX  = "spot:";
+    final String FROM_HEADER     = "From:";
+    final String EXPECTED_SENDER = "query-reply@saildocs.com";
     
     File[] messages = inboxDir.listFiles(new FilenameFilter()
     {
@@ -161,6 +165,8 @@ public class SpotRawBulletinPanel
     });
     String messContent = "";
     Date mostRecent = null;
+    
+    List<InboxMessage> messList = new ArrayList<InboxMessage>();
     for (File mess : messages)
     {
       if (mess.isFile())
@@ -172,6 +178,7 @@ public class SpotRawBulletinPanel
           String xStatus = "";
           String subject = "";
           String content = "";
+          String sender  = "";
           boolean inContent   = false;
           boolean keepReading = true;
           while (keepReading)
@@ -198,13 +205,21 @@ public class SpotRawBulletinPanel
                   xStatus = line.substring(XSTATUS_HEADER.length()).trim();
                 else if (line.startsWith(SUBJECT_HEADER))
                   subject = line.substring(SUBJECT_HEADER.length()).trim();
+                else if (line.startsWith(FROM_HEADER))
+                  sender = line.substring(FROM_HEADER.length()).trim();
               }
             }
           }
           br.close();
-          Date messDate = MESS_DATE_FMT.parse(xDate);
-          if (mostRecent == null || messDate.after(mostRecent)) // TODO Filter on the subject
+          Date messDate = null;
+          try { messDate = MESS_DATE_FMT.parse(xDate); } catch (Exception ex) {}
+          if (messDate != null && 
+              sender.equals(EXPECTED_SENDER) && 
+              subject.startsWith(SUBJECT_PREFIX) &&
+              xStatus.trim().equals("New") && 
+              (mostRecent == null || messDate.after(mostRecent)))
           {
+            messList.add(new InboxMessage(subject, content, messDate));
             System.out.println("Message Date:" + xDate);
             mostRecent = messDate;
             messContent = content;
@@ -216,8 +231,44 @@ public class SpotRawBulletinPanel
         }
       }
     }
-    System.out.println("Message:\n" + messContent);
+    if (messList.size() > 1)
+    {
+      System.out.println("There are " + messList.size() + " unread SPOT bulletins.");
+      // TODO Prompt the user to choose the message
+      for (InboxMessage im : messList)
+        System.out.println(im.getDate().toString() + ", " + im.getSubject());
+    }
+    System.out.println("Message:\n" + messContent);    
     // Put the content in the right place
     spotBulletinEditorPane.setText(messContent);
   }  
+  
+  private static class InboxMessage
+  {
+    private String subject;
+    private String content;
+    private Date date;
+    
+    public InboxMessage(String subject, String content, Date date)
+    {
+      this.subject = subject;
+      this.content = content;
+      this.date = date;
+    }
+
+    public String getSubject()
+    {
+      return subject;
+    }
+
+    public String getContent()
+    {
+      return content;
+    }
+
+    public Date getDate()
+    {
+      return date;
+    }
+  }
 }
