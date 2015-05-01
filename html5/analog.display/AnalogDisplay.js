@@ -30,7 +30,7 @@ var analogDisplayColorConfigWhite =
   valueColor:        'grey',
   valueOutlineColor: 'black',
   valueNbDecimal:    1,
-  handColor:         'rgba(0, 0, 100, 0.25)',
+  handColor:         'red', // 'rgba(0, 0, 100, 0.25)',
   handOutlineColor:  'black',
   withHandShadow:    true,
   knobColor:         'DarkGrey',
@@ -86,7 +86,6 @@ function AnalogDisplay(cName,                     // Canvas Name
     nbDecimal = analogDisplayColorConfig.valueNbDecimal;
 
   var scale = dSize / 100;
-  var secondaryValue;
 
   var canvasName = cName;
   var displaySize = dSize;
@@ -199,11 +198,6 @@ function AnalogDisplay(cName,                     // Canvas Name
 
   function drawDisplay(displayCanvasName, displayRadius, displayValue)
   {
-    if (toRadians === undefined) 
-    {
-      return;
-    }
-    
     var schemeColor = getStyleRuleValue('color', '.display-scheme');
 //  console.log(">>> DEBUG >>> color:" + schemeColor);
     if (schemeColor === 'black')
@@ -229,7 +223,7 @@ function AnalogDisplay(cName,                     // Canvas Name
     context.beginPath();
   //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
 //  context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree), (2 * Math.PI) + toRadians(overlapOver180InDegree), false);
-    context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree > 0?90:0), (2 * Math.PI) + toRadians(overlapOver180InDegree > 0?90:0), false); 
+    context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree > 0?90:0), (2 * Math.PI) + toRadians(overlapOver180InDegree > 0?90:0), false);
     context.lineWidth = 5;
   
     if (analogDisplayColorConfig.withGradient)
@@ -333,23 +327,6 @@ function AnalogDisplay(cName,                     // Canvas Name
     context.strokeText(text, (canvas.width / 2) - (len / 2), ((radius * .75) + 10)); // Outlined  
     context.closePath();
   
-    if (secondaryValue !== undefined) 
-    {
-      text = secondaryValue;
-      len = 0;
-      context.font = "bold " + Math.round(scale * 32) + "px Arial"; // "bold 32px Arial"
-      metrics = context.measureText(text);
-      len = metrics.width;
-    
-      context.beginPath();
-      context.fillStyle = analogDisplayColorConfig.valueColor;
-      context.fillText(text, (canvas.width / 2) - (len / 2), ((radius * 1.75) - 10));
-      context.lineWidth = 1;
-      context.strokeStyle = analogDisplayColorConfig.valueOutlineColor;
-      context.strokeText(text, (canvas.width / 2) - (len / 2), ((radius * 1.75) - 10)); // Outlined  
-      context.closePath();      
-    }
-
     // Hand
     context.beginPath();
     if (analogDisplayColorConfig.withHandShadow)
@@ -395,20 +372,16 @@ function AnalogDisplay(cName,                     // Canvas Name
   this.setValue = function(val)
   {
     drawDisplay(canvasName, displaySize, val);  
-  };
-  
-  this.setSecondaryValue = function(val)
-  {
-    secondaryValue = val;  
-  };
-  
-  var toDegrees = function(rad)
-  {
-    return rad * (180 / Math.PI);
-  };
-  
-  var toRadians = function(deg)
-  {
-    return deg * (Math.PI / 180);
-  };
-}
+  };  
+};
+
+var toDegrees = function(rad)
+{
+  return rad * (180 / Math.PI);
+};
+
+var toRadians = function(deg)
+{
+  return deg * (Math.PI / 180);
+};
+

@@ -23,6 +23,9 @@ var init = function()
   thermometer     = new Thermometer('tmpCanvas', 200);
   athermometer    = new Thermometer('atmpCanvas', 200);
   rose            = new CompassRose('roseCanvas', 400, 50);
+  displayBaro     = new AnalogDisplay('baroCanvas', 100, 1040,  10,  1, true, 40, 980);
+  displayHum      = new AnalogDisplay('humCanvas',  100,  100,  10,  1, true, 40);
+  displayVolt     = new AnalogDisplay('voltCanvas', 100,   16,   1,  0.25, true, 40);
   
   displayOverview = new BoatOverview('overviewCanvas');
   
@@ -293,6 +296,43 @@ var pingNMEAConsole = function()
       errMess += ((errMess.length > 0?"\n":"") + "Problem with air temperature...");
 //    athermometer.animate(0.0);
       athermometer.setValue(0.0);
+    }
+    // Battery_Voltage, Relative_Humidity, Barometric_Pressure
+    try
+    {
+      var voltage = parseFloat(doc.getElementsByTagName("Battery_Voltage")[0].childNodes[0].nodeValue);
+//    displayVolt.animate(airTemp);
+      displayVolt.setValue(voltage);
+    }
+    catch (err)
+    {
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Battery_Voltage...");
+//    displayVolt.animate(0.0);
+//    displayVolt.setValue(0.0);
+    }
+    try
+    {
+      var baro = parseFloat(doc.getElementsByTagName("Barometric_Pressure")[0].childNodes[0].nodeValue);
+//    displayBaro.animate(airTemp);
+      displayBaro.setValue(baro * 1000);
+    }
+    catch (err)
+    {
+//    errMess += ((errMess.length > 0?"\n":"") + "Problem with air Barometric_Pressure...");
+//    displayBaro.animate(0.0);
+//    displayBaro.setValue(1013.0);
+    }
+    try
+    {
+      var hum = parseFloat(doc.getElementsByTagName("Relative_Humidity")[0].childNodes[0].nodeValue);
+//    displayHum.animate(airTemp);
+      displayHum.setValue(hum);
+    }
+    catch (err)
+    {
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Relative_Humidity...");
+//    displayHum.animate(0.0);
+      displayHum.setValue(0.0);
     }
     try
     {

@@ -88,6 +88,7 @@ import ocss.nmea.parser.RMC;
 import ocss.nmea.parser.SVData;
 import ocss.nmea.parser.SolarDate;
 import ocss.nmea.parser.Speed;
+import ocss.nmea.parser.StringGenerator;
 import ocss.nmea.parser.StringParsers;
 
 import ocss.nmea.parser.Temperature;
@@ -653,7 +654,58 @@ public class Utils
           ndc.put(NMEADataCache.SAT_IN_VIEW, satmap);
       }
     }
-    else if ("BAT".equals(sentenceId))     // Battery Voltage. Not Standard, from the Raspberry PI
+    else if ("MDA".equals(sentenceId)) // Meteorological composite (Humidity, among others)
+    {
+      // TODO Implement
+    }
+    else if ("XDR".equals(sentenceId)) // Transducer measurement
+    {
+      List<StringGenerator.XDRElement> xdr = StringParsers.parseXDR(value);
+      if (xdr != null)
+      {
+        for (StringGenerator.XDRElement xe : xdr)
+        {
+          StringGenerator.XDRTypes type = xe.getTypeNunit();
+          double val = xe.getValue();
+          // Insert in cache
+          if (type.equals(StringGenerator.XDRTypes.HUMIDITY))
+          {
+            if (ndc == null)
+              NMEAContext.getInstance().putDataCache(NMEADataCache.RELATIVE_HUMIDITY, val);
+            else
+              ndc.put(NMEADataCache.RELATIVE_HUMIDITY, val);
+          }
+          else if (type.equals(StringGenerator.XDRTypes.PRESSURE_B))
+          {
+            if (ndc == null)
+              NMEAContext.getInstance().putDataCache(NMEADataCache.BARO_PRESS, val);
+            else
+              ndc.put(NMEADataCache.BARO_PRESS, val);
+          }
+          else if (type.equals(StringGenerator.XDRTypes.VOLTAGE))
+          {
+            if (ndc == null)
+              NMEAContext.getInstance().putDataCache(NMEADataCache.BATTERY, val);
+            else
+              ndc.put(NMEADataCache.BATTERY, val);
+          }
+          else
+          {
+            if ("true".equals(System.getProperty("verbose", "false")))
+              System.out.println("Unmanaged XDR Type:" + type.toString());
+          }
+        }
+      }
+    }
+    else if ("MWD".equals(sentenceId)) // Wind Speed and Direction
+    {
+      // TODO Implement
+    }
+    else if ("VWT".equals(sentenceId)) // True Wind Speed and Angle (deprecated, use MWV)
+    {
+      // TODO Implement
+    }
+    else if ("BAT".equals(sentenceId))     // Battery Voltage. Not Standard, from the Raspberry PI. There is an XDR Voltage...
     {
       float volt = StringParsers.parseBAT(value);
       if (volt > -1)
@@ -684,7 +736,7 @@ public class Utils
         if (customNMEAParserClassName == null)
         {
           if ("true".equals(System.getProperty("verbose", "false")))
-            System.out.println(">>> DEBUG >>> String [" + sentenceId + "] not managed (no custom parser)");
+            System.out.println(">>> DEBUG >>> String [" + sentenceId + "] not managed (no custom parser), value:" + value);
         }
         else
         {
@@ -710,7 +762,7 @@ public class Utils
             ndc.put(customNMEAParser.getCacheID(value), obj);
         }
         else if ("true".equals(System.getProperty("verbose", "false")))
-          System.out.println(">>> DEBUG >>> String [" + sentenceId + "] not managed, or invalid.");
+          System.out.println(">>> DEBUG >>> String [" + sentenceId + "] not managed, or invalid. Value:" + value);
       }
     }
     

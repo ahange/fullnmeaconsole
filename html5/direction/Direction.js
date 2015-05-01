@@ -16,7 +16,7 @@ var directionColorConfigWhite =
   valueColor:        'grey',
   valueOutlineColor: 'black',
   valueNbDecimal:    0,
-  handColor:         'rgba(0, 0, 100, 0.25)',
+  handColor:         'red', // 'rgba(0, 0, 100, 0.25)',
   handOutlineColor:  'black',
   withHandShadow:    true,
   knobColor:         'DarkGrey',

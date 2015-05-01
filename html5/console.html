@@ -145,6 +145,13 @@
 
     document.getElementById('atmpCanvas').width = 100 * (Math.min(ww, totalWidth) / totalWidth);
     document.getElementById('atmpCanvas').height = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    // Baro
+    document.getElementById('baroCanvas').width = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    document.getElementById('baroCanvas').height = 220 * (Math.min(ww, totalWidth) / totalWidth);
+    // Hmidity
+    document.getElementById('humCanvas').width = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    document.getElementById('humCanvas').height = 220 * (Math.min(ww, totalWidth) / totalWidth);
+
     // Jumbos
     var jumboCanvasList = ['jumboBSPCanvas', 'jumboTWDCanvas', 'jumboHDGCanvas', 'jumboLWYCanvas',
                            'jumboAWACanvas', 'jumboTWACanvas', 'jumboAWSCanvas', 'jumboTWSCanvas',
@@ -230,7 +237,7 @@
       <option value="black" selected>Black theme</option>
       <option value="white">White theme</option>
     </select-->
-    Color Scheme:&nbsp;
+    &nbsp;&nbsp;Color Scheme:&nbsp;
     <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
     <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
     <hr>
@@ -286,6 +293,26 @@
             <canvas id="roseCanvas" width="500" height="50" title="True Heading"></canvas>
           </td>
         </tr>        
+        <tr>
+          <td align="center"></td>
+          <td align="center">Barometer in hPa</td>
+          <td align="center">Rel. Himidity in %</td>
+          <td align="center">Battery Voltage</td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+        <tr>
+          <td align="center"></td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="baroCanvas" width="240" height="220" title="Atmospheric Pressure in hPa"></canvas>
+          </td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="humCanvas" width="240" height="220" title="Relative Humidity in %"></canvas>
+          </td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="voltCanvas" width="240" height="220" title="Battery Voltage, in V"></canvas>
+          </td>
+        </tr>
       </table>   
     </div>
     <div id="overview" style="display: none;">
@@ -437,5 +464,7 @@
       <hr>
     </div>
     <div id="err-mess"></div>
+    <hr>
+    <address>The HTML5 Console</address>
   </body>
 </html>
