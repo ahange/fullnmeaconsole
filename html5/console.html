@@ -243,6 +243,8 @@
     &nbsp;&nbsp;Color Scheme:&nbsp;
     <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
     <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
+    &nbsp;&nbsp;
+    <input type="checkbox" id="with-border" checked onclick="changeBorder(this.checked);">With Border
     <hr>
     <div id="displays" style="display: inline;">
       <!-- Analog Displays -->
@@ -299,7 +301,7 @@
         <tr>
           <td align="center"></td>
           <td align="center">Barometer in hPa</td>
-          <td align="center">Rel. Himidity in %</td>
+          <td align="center">Rel. Humidity in %</td>
           <td align="center">Battery Voltage</td>
           <td align="center"></td>
           <td align="center"></td>

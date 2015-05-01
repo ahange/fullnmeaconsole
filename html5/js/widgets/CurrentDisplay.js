@@ -65,6 +65,7 @@ function CurrentDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
   var angleToDisplay = 0;
   var currentSpeed = 0;
   var incr = 1;
+  var withBorder = true;
   
   var instance = this;
   
@@ -79,6 +80,11 @@ function CurrentDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
     currentDisplay(canvasName, displaySize, previousValue);
   };
   
+  this.setBorder = function(b) 
+  {
+    withBorder = b;
+  };
+
   this.startStop = function (buttonName) 
   {
 //  console.log('StartStop requested on ' + buttonName);
@@ -213,10 +219,12 @@ function CurrentDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
   //context.fillRect(0, 0, canvas.width, canvas.height);    
   
     context.beginPath();
-  //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
-    context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 5;
-  
+    if (withBorder === true)
+    {
+  //  context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
+      context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
+      context.lineWidth = 5;
+    }
     if (analogDisplayColorConfig.withGradient)
     {
       var grd = context.createLinearGradient(0, 5, 0, radius);

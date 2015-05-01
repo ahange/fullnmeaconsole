@@ -65,7 +65,8 @@ function AWDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
   var angleToDisplay = 0;
   var aws = 0;
   var incr = 1;
-  
+  var withBorder = true;
+
   var instance = this;
   
 //try { console.log('in the AWDisplay constructor for ' + cName + " (" + dSize + ")"); } catch (e) {}
@@ -79,6 +80,11 @@ function AWDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
     drawDisplay(canvasName, displaySize, previousValue);
   };
   
+  this.setBorder = function(b) 
+  {
+    withBorder = b;
+  };
+
   this.startStop = function (buttonName) 
   {
 //  console.log('StartStop requested on ' + buttonName);
@@ -213,10 +219,12 @@ function AWDisplay(cName, dSize, majorTicks, minorTicks, withDigits)
   //context.fillRect(0, 0, canvas.width, canvas.height);    
   
     context.beginPath();
-  //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
-    context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 5;
-  
+    if (withBorder === true)
+    {
+  //  context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
+      context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
+      context.lineWidth = 5;
+    }
     if (analogDisplayColorConfig.withGradient)
     {
       var grd = context.createLinearGradient(0, 5, 0, radius);

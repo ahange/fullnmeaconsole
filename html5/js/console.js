@@ -54,6 +54,20 @@ var init = function()
   var interval = setInterval(function() { pingNMEAConsole(); }, 1000);
 };
 
+var changeBorder = function(b) 
+{
+  displayBSP.setBorder(b);
+  displayPRF.setBorder(b);
+  displayHDG.setBorder(b);
+  displayTWD.setBorder(b);
+  displayTWS.setBorder(b);
+  displayBaro.setBorder(b);
+  displayHum.setBorder(b);
+  displayVolt.setBorder(b);
+  displayAW.setBorder(b);
+  displayCurrent.setBorder(b);
+};
+
 var TOTAL_WIDTH = 1200;
 
 var resizeDisplays = function(width)
