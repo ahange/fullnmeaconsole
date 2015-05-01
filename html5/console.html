@@ -26,6 +26,8 @@
     <script type="text/javascript" src="js/widgets/JumboDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/AWDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/CurrentDisplay.js"></script>
+    <script type="text/javascript" src="js/widgets/DateDisplay.js"></script>
+    <script type="text/javascript" src="js/widgets/TimeDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/TWDEvolution.js"></script>
     <script type="text/javascript" src="js/widgets/TWSEvolution.js"></script>
     <script type="text/javascript" src="js/console.js"></script>
@@ -299,7 +301,7 @@
           </td>
         </tr>        
         <tr>
-          <td align="center"></td>
+          <td align="center">GPS Date / Time</td>
           <td align="center">Barometer in hPa</td>
           <td align="center">Rel. Humidity in %</td>
           <td align="center">Battery Voltage</td>
@@ -307,7 +309,11 @@
           <td align="center"></td>
         </tr>
         <tr>
-          <td align="center"></td>
+          <td align="center" valign="top">
+            <canvas id="dateCanvas" width="216" height="40" title="GPS Date"></canvas>
+            <br>
+            <canvas id="timeCanvas" width="192" height="40" title="GPS Time"></canvas>
+          </td>
           <td align="center" valign="top" rowspan="1">
             <canvas id="baroCanvas" width="240" height="220" title="Atmospheric Pressure in hPa"></canvas>
           </td>

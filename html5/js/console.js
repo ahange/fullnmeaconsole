@@ -2,7 +2,7 @@
  * @author Olivier Le Diouris
  */
 var displayBSP, displayLog, displayPRF, displayTWD, displayTWS, thermometer, athermometer, displayHDG, rose, 
-    displayBaro, displayHum, displayVolt, displayOverview,
+    displayBaro, displayHum, displayVolt, displayDate, displayTime, displayOverview,
     jumboBSP, jumboHDG, jumboTWD, jumboLWY, jumboAWA, jumboTWA, jumboAWS, jumboTWS, jumboCOG, jumboCDR, jumboSOG, jumboCSP, jumboVMG,
     displayAW, displayCurrent, 
     twdEvolution, twsEvolution;
@@ -24,6 +24,8 @@ var init = function()
   thermometer     = new Thermometer('tmpCanvas', 200);
   athermometer    = new Thermometer('atmpCanvas', 200);
   rose            = new CompassRose('roseCanvas', 400, 50);
+  displayDate     = new DateDisplay('dateCanvas', 60);
+  displayTime     = new TimeDisplay('timeCanvas', 60);
   displayBaro     = new AnalogDisplay('baroCanvas', 100, 1040,  10,  1, true, 40, 980);
   displayHum      = new AnalogDisplay('humCanvas',  100,  100,  10,  1, true, 40);
   displayVolt     = new AnalogDisplay('voltCanvas', 100,   16,   1,  0.25, true, 40);
@@ -208,7 +210,7 @@ var pingNMEAConsole = function()
 //    displayBSP.animate(0.0);
       displayBSP.setValue(0.0);
     }
-     try
+    try
     {
       var log = parseFloat(doc.getElementsByTagName("log")[0].childNodes[0].nodeValue);
       displayLog.setValue(log);
@@ -219,6 +221,19 @@ var pingNMEAConsole = function()
       console.log("Log problem...")
       errMess += ((errMess.length > 0?"\n":"") + "Problem with log...:" + err);
     }
+    try
+    {
+      var gpsDate = parseFloat(doc.getElementsByTagName("gps-date-time")[0].childNodes[0].nodeValue);
+      displayDate.setValue(gpsDate);
+      displayTime.setValue(gpsDate);
+   // document.getElementById("log").innerText = log.toFixed(0);
+    }
+    catch (err)
+    {
+      console.log("GPS Date problem...")
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with GPS Date...:" + err);
+    }    
+
     try
     {
       var hdg = parseFloat(doc.getElementsByTagName("hdg")[0].childNodes[0].nodeValue) % 360;
