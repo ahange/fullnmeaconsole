@@ -26,6 +26,8 @@
     <script type="text/javascript" src="js/widgets/JumboDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/AWDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/CurrentDisplay.js"></script>
+    <script type="text/javascript" src="js/widgets/DateDisplay.js"></script>
+    <script type="text/javascript" src="js/widgets/TimeDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/TWDEvolution.js"></script>
     <script type="text/javascript" src="js/widgets/TWSEvolution.js"></script>
     <script type="text/javascript" src="js/console.ws.js"></script>
@@ -145,6 +147,16 @@
 
     document.getElementById('atmpCanvas').width = 100 * (Math.min(ww, totalWidth) / totalWidth);
     document.getElementById('atmpCanvas').height = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    // Baro
+    document.getElementById('baroCanvas').width = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    document.getElementById('baroCanvas').height = 220 * (Math.min(ww, totalWidth) / totalWidth);
+    // Humidity
+    document.getElementById('humCanvas').width = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    document.getElementById('humCanvas').height = 220 * (Math.min(ww, totalWidth) / totalWidth);
+    // Voltage
+    document.getElementById('voltCanvas').width = 240 * (Math.min(ww, totalWidth) / totalWidth);
+    document.getElementById('voltCanvas').height = 220 * (Math.min(ww, totalWidth) / totalWidth);
+
     // Jumbos
     var jumboCanvasList = ['jumboBSPCanvas', 'jumboTWDCanvas', 'jumboHDGCanvas', 'jumboLWYCanvas',
                            'jumboAWACanvas', 'jumboTWACanvas', 'jumboAWSCanvas', 'jumboTWSCanvas',
@@ -230,9 +242,11 @@
       <option value="black" selected>Black theme</option>
       <option value="white">White theme</option>
     </select-->
-    Color Scheme:&nbsp;
+    &nbsp;&nbsp;Color Scheme:&nbsp;
     <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
     <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
+    &nbsp;&nbsp;
+    <input type="checkbox" id="with-border" checked onclick="changeBorder(this.checked);">With Border
     <hr>
     <div id="displays" style="display: inline;">
       <!-- Analog Displays -->
@@ -286,6 +300,30 @@
             <canvas id="roseCanvas" width="500" height="50" title="True Heading"></canvas>
           </td>
         </tr>        
+        <tr>
+          <td align="center">GPS Date / Time</td>
+          <td align="center">Barometer in hPa</td>
+          <td align="center">Rel. Humidity in %</td>
+          <td align="center">Battery Voltage</td>
+          <td align="center"></td>
+          <td align="center"></td>
+        </tr>
+        <tr>
+          <td align="center" valign="top">
+            <canvas id="dateCanvas" width="216" height="40" title="GPS Date"></canvas>
+            <br>
+            <canvas id="timeCanvas" width="192" height="40" title="GPS Time"></canvas>
+          </td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="baroCanvas" width="240" height="220" title="Atmospheric Pressure in hPa"></canvas>
+          </td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="humCanvas" width="240" height="220" title="Relative Humidity in %"></canvas>
+          </td>
+          <td align="center" valign="top" rowspan="1">
+            <canvas id="voltCanvas" width="240" height="220" title="Battery Voltage, in V"></canvas>
+          </td>
+        </tr>
       </table>   
     </div>
     <div id="overview" style="display: none;">
@@ -437,6 +475,7 @@
       <hr>
     </div>
     <div id="err-mess"></div>
+    <address>The HTML5 WebSocket Console</address>
   </body>
 </html>
   

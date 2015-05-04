@@ -96,6 +96,7 @@ function AnalogDisplay(cName,                     // Canvas Name
   var valueToDisplay = 0;
   var incr = 1;
   var nbDec = nbDecimal;
+  var withBorder = true;
   
   var instance = this;
   
@@ -106,6 +107,10 @@ function AnalogDisplay(cName,                     // Canvas Name
   this.setNbDec = function(nb) 
   {
     nbDec = nb;
+  };
+  this.setBorder = function(b) 
+  {
+    withBorder = b;
   };
 
   this.repaint = function()
@@ -221,11 +226,14 @@ function AnalogDisplay(cName,                     // Canvas Name
   //context.fillRect(0, 0, canvas.width, canvas.height);    
   
     context.beginPath();
-  //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
-//  context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree), (2 * Math.PI) + toRadians(overlapOver180InDegree), false);
-    context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree > 0?90:0), (2 * Math.PI) + toRadians(overlapOver180InDegree > 0?90:0), false);
-    context.lineWidth = 5;
-  
+    if (withBorder === true)
+    {
+  //  context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
+//    context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree), (2 * Math.PI) + toRadians(overlapOver180InDegree), false);
+      context.arc(canvas.width / 2, radius + 10, radius, Math.PI - toRadians(overlapOver180InDegree > 0?90:0), (2 * Math.PI) + toRadians(overlapOver180InDegree > 0?90:0), false);
+      context.lineWidth = 5;
+    }
+
     if (analogDisplayColorConfig.withGradient)
     {
       var grd = context.createLinearGradient(0, 5, 0, radius);

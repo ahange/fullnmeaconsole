@@ -66,6 +66,7 @@ function Direction(cName, dSize, majorTicks, minorTicks, withRose)
   this.valueToDisplay = 0;
   this.incr = 1;
   this.busy = false;
+  var withBorder = true;
   
   var instance = this;
   
@@ -78,6 +79,11 @@ function Direction(cName, dSize, majorTicks, minorTicks, withRose)
     this.drawDisplay(canvasName, displaySize, instance.previousValue);
   };
   
+  this.setBorder = function(b) 
+  {
+    withBorder = b;
+  };
+
   this.startStop = function (buttonName) 
   {
 //  console.log('StartStop requested on ' + buttonName);
@@ -221,10 +227,12 @@ function Direction(cName, dSize, majorTicks, minorTicks, withRose)
   //context.fillRect(0, 0, canvas.width, canvas.height);    
   
     context.beginPath();
-  //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
-    context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 5;
-  
+    if (withBorder === true)
+    {
+    //context.arc(x, y, radius, startAngle, startAngle + Math.PI, antiClockwise);      
+      context.arc(canvas.width / 2, radius + 10, radius, 0, 2 * Math.PI, false);
+      context.lineWidth = 5;
+    }
     if (directionColorConfig.withGradient)
     {
       var grd = context.createLinearGradient(0, 5, 0, radius);

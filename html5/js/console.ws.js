@@ -1,7 +1,8 @@
 /*
  * @author Olivier Le Diouris
  */
-var displayBSP, displayLog, displayPRF, displayTWD, displayTWS, thermometer, athermometer, displayHDG, rose, displayOverview,
+var displayBSP, displayLog, displayPRF, displayTWD, displayTWS, thermometer, athermometer, displayHDG, rose, 
+    displayBaro, displayHum, displayVolt, displayDate, displayTime, displayOverview, displayOverview,
     jumboBSP, jumboHDG, jumboTWD, jumboLWY, jumboAWA, jumboTWA, jumboAWS, jumboTWS, jumboCOG, jumboCDR, jumboSOG, jumboCSP, jumboVMG,
     displayAW, displayCurrent,
     twdEvolution, twsEvolution;
@@ -23,6 +24,11 @@ var init = function()
   thermometer     = new Thermometer('tmpCanvas', 200);
   athermometer    = new Thermometer('atmpCanvas', 200);
   rose            = new CompassRose('roseCanvas', 400, 50);
+  displayDate     = new DateDisplay('dateCanvas', 60);
+  displayTime     = new TimeDisplay('timeCanvas', 60);
+  displayBaro     = new AnalogDisplay('baroCanvas', 100, 1040,  10,  1, true, 40, 980);
+  displayHum      = new AnalogDisplay('humCanvas',  100,  100,  10,  1, true, 40);
+  displayVolt     = new AnalogDisplay('voltCanvas', 100,   16,   1,  0.25, true, 40);
   
   displayOverview = new BoatOverview('overviewCanvas');
   
@@ -87,6 +93,20 @@ var init = function()
   };
 };
 
+var changeBorder = function(b) 
+{
+  displayBSP.setBorder(b);
+  displayPRF.setBorder(b);
+  displayHDG.setBorder(b);
+  displayTWD.setBorder(b);
+  displayTWS.setBorder(b);
+  displayBaro.setBorder(b);
+  displayHum.setBorder(b);
+  displayVolt.setBorder(b);
+  displayAW.setBorder(b);
+  displayCurrent.setBorder(b);
+};
+
 var TOTAL_WIDTH = 1200;
 
 var resizeDisplays = function(width)
@@ -101,6 +121,9 @@ var resizeDisplays = function(width)
     thermometer.setDisplaySize(200 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
     athermometer.setDisplaySize(200 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
     rose.setDisplaySize(400 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
+    displayBaro.setDisplaySize(100 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
+    displayHum.setDisplaySize(100 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
+    displayVolt.setDisplaySize(100 * (Math.min(width, TOTAL_WIDTH) / TOTAL_WIDTH)); 
     displayOverview.drawGraph();
     twdEvolution.drawGraph();
     twsEvolution.drawGraph();
@@ -178,6 +201,18 @@ var setValues = function(doc)
     }
     try
     {
+      var gpsDate = parseFloat(json.gpstime);
+      displayDate.setValue(gpsDate);
+      displayTime.setValue(gpsDate);
+   // document.getElementById("log").innerText = log.toFixed(0);
+    }
+    catch (err)
+    {
+      console.log("GPS Date problem...")
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with GPS Date...:" + err);
+    }    
+    try
+    {
       var hdg = parseFloat(json.hdg.toFixed(0)) % 360;
 //    displayHDG.animate(hdg);
       displayHDG.setValue(hdg);
@@ -219,7 +254,7 @@ var setValues = function(doc)
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWA...");
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWD...");
 //    displayTWD.animate(0.0);
       displayTWD.setValue(0.0);
     }
@@ -227,9 +262,7 @@ var setValues = function(doc)
     {
       var tws = parseFloat(json.tws.toFixed(2));
 //    displayTWS.animate(tws);
-      displayTWS.setSecondaryValue("F" + getBeaufort(tws));
       displayTWS.setValue(tws);
-      
       displayOverview.setTWS(tws);
       jumboTWS.setValue(tws.toFixed(1));
       twsEvolution.addTWS({ "speed": tws, "time": (new Date()).getTime() });
@@ -252,7 +285,7 @@ var setValues = function(doc)
     }
     try
     {
-      var waterTemp = parseFloat(json.wtemp.toFixed(0));
+      var waterTemp = parseFloat(json.wtemp.toFixed(1));
 //    thermometer.animate(waterTemp);
       thermometer.setValue(waterTemp);
     }
@@ -264,7 +297,7 @@ var setValues = function(doc)
     }
     try
     {
-      var airTemp = parseFloat(json.atemp.toFixed(0));
+      var airTemp = parseFloat(json.atemp.toFixed(1));
 //    athermometer.animate(airTemp);
       athermometer.setValue(airTemp);
     }
@@ -273,6 +306,48 @@ var setValues = function(doc)
       errMess += ((errMess.length > 0?"\n":"") + "Problem with air temperature...");
 //    athermometer.animate(0.0);
       athermometer.setValue(0.0);
+    }
+    try
+    {
+      var voltage = parseFloat(json.bat);
+      if (voltage > 0) {
+//      displayVolt.animate(airTemp);
+        displayVolt.setValue(voltage);
+      }
+    }
+    catch (err)
+    {
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Battery_Voltage...");
+//    displayVolt.animate(0.0);
+//    displayVolt.setValue(0.0);
+    }
+    try
+    {
+      var baro = parseFloat(json.prmsl);
+      if (baro != 0) {
+//      displayBaro.animate(baro);
+        displayBaro.setValue(baro);
+      }
+    }
+    catch (err)
+    {
+//    errMess += ((errMess.length > 0?"\n":"") + "Problem with air Barometric_Pressure...");
+//    displayBaro.animate(0.0);
+//    displayBaro.setValue(1013.0);
+    }
+    try
+    {
+      var hum = parseFloat(json.hum);
+      if (hum > 0) {
+//      displayHum.animate(airTemp);
+        displayHum.setValue(hum);
+      }
+    }
+    catch (err)
+    {
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Relative_Humidity...");
+//    displayHum.animate(0.0);
+      displayHum.setValue(0.0);
     }
     try
     {
@@ -523,15 +598,4 @@ var lpad = function(str, pad, len)
   while (str.length < len)
     str = pad + str;
   return str;
-};
-
-var getBeaufort = function(ws)
-{
-  var BEAUFORT_SCALE = [ 0, 1, 4, 7, 11, 16, 22, 28, 34, 41, 48, 56, 64 ];
-  var b = 0;
-  while (ws > BEAUFORT_SCALE[b]) 
-  {
-    b++;
-  }
-  return (b>0 ? b - 1 : b);
 };
