@@ -45,6 +45,9 @@
               <xsl:when test="name(.) = 'wtemp'">
                 <td>Water Temperature</td><td><xsl:value-of select="."/>&deg;C</td>                
               </xsl:when>
+              <xsl:when test="name(.) = 'atemp'">
+                <td>Air Temperature</td><td><xsl:value-of select="."/>&deg;C</td>                
+              </xsl:when>
               <xsl:when test="name(.) = 'twd'">
                 <td>True Wind Direction</td><td><xsl:value-of select="."/>&deg;</td>                
               </xsl:when>
@@ -86,6 +89,15 @@
               </xsl:when>
               <xsl:when test="name(.) = 'gps-date-time-fmt'">
                 <td>GPS Date &amp; Time</td><td><xsl:value-of select="." disable-output-escaping="yes"/></td>                
+              </xsl:when>
+              <xsl:when test="name(.) = 'Battery_Voltage'">
+                <td>Voltage</td><td><xsl:value-of select="."/> V</td>                
+              </xsl:when>
+              <xsl:when test="name(.) = 'Relative_Humidity'">
+                <td>Rel. Humidity</td><td><xsl:value-of select="."/> %</td>                
+              </xsl:when>
+              <xsl:when test="name(.) = 'prmsl'">
+                <td>Baro</td><td><xsl:value-of select="."/> hPa</td>                
               </xsl:when>
               <!--xsl:otherwise>
                 <td><xsl:value-of select="name(.)"/></td><td><xsl:value-of select="."/></td>                

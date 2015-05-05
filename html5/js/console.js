@@ -11,6 +11,16 @@ var jumboList = [];
 
 var editing = false;
 
+// TODO from Config file/request
+var displayOptions = {
+  displayWT: true,
+  displayAT: true,
+  displayGDT: true,
+  displayPRMSL: true,
+  displayHUM: true,
+  displayVOLT: true
+};
+
 var init = function() 
 {
   displayBSP      = new AnalogDisplay('bspCanvas', 100,   15,  5,  1);
@@ -345,9 +355,9 @@ var pingNMEAConsole = function()
     }
     try
     {
-      var baro = parseFloat(doc.getElementsByTagName("Barometric_Pressure")[0].childNodes[0].nodeValue);
+      var baro = parseFloat(doc.getElementsByTagName("prmsl")[0].childNodes[0].nodeValue);
 //    displayBaro.animate(airTemp);
-      displayBaro.setValue(baro * 1000);
+      displayBaro.setValue(baro);
     }
     catch (err)
     {
@@ -550,6 +560,14 @@ var populatePrmForDisplaying = function(doc)
   document.getElementById("damping").innerHTML            = doc.getElementsByTagName("damping")[0].childNodes[0].nodeValue;
   document.getElementById("polar-file").innerHTML         = doc.getElementsByTagName("polar-file")[0].childNodes[0].nodeValue;
   document.getElementById("polar-speed-factor").innerHTML = doc.getElementsByTagName("polar-speed-factor")[0].childNodes[0].nodeValue;
+
+  // TODO For real
+  document.getElementById("display-wt").innerHTML    = "&nbsp;&nbsp;" + (displayOptions.displayWT    === true ? "Y" : "N");
+  document.getElementById("display-at").innerHTML    = "&nbsp;&nbsp;" + (displayOptions.displayAT    === true ? "Y" : "N");
+  document.getElementById("display-gdt").innerHTML   = "&nbsp;&nbsp;" + (displayOptions.displayGDT   === true ? "Y" : "N");
+  document.getElementById("display-prmsl").innerHTML = "&nbsp;&nbsp;" + (displayOptions.displayPRMSL === true ? "Y" : "N");
+  document.getElementById("display-hum").innerHTML   = "&nbsp;&nbsp;" + (displayOptions.displayHUM   === true ? "Y" : "N");
+  document.getElementById("display-volt").innerHTML  = "&nbsp;&nbsp;" + (displayOptions.displayVOLT  === true ? "Y" : "N");
 };
 
 var populatePrmForEditing = function(doc)
@@ -564,6 +582,14 @@ var populatePrmForEditing = function(doc)
   document.getElementById("damping").innerHTML            = "<input id='new-dpg' type='text' value='" + doc.getElementsByTagName("damping")[0].childNodes[0].nodeValue + "'>";
   document.getElementById("polar-file").innerHTML         = "<input id='new-pol' type='text' value='" + doc.getElementsByTagName("polar-file")[0].childNodes[0].nodeValue + "'>";
   document.getElementById("polar-speed-factor").innerHTML = "<input id='new-fac' type='text' value='" + doc.getElementsByTagName("polar-speed-factor")[0].childNodes[0].nodeValue + "'>";
+
+  // TODO For real
+  document.getElementById("display-wt").innerHTML    = "<input type='checkbox' id='display-wt-cb'" + (displayOptions.displayWT === true ? "checked" : "") + ">";
+  document.getElementById("display-at").innerHTML    = "<input type='checkbox' id='display-at-cb'" + (displayOptions.displayAT === true ? "checked" : "") + ">";
+  document.getElementById("display-gdt").innerHTML   = "<input type='checkbox' id='display-gdt-cb'" + (displayOptions.displayGDT === true ? "checked" : "") + ">";
+  document.getElementById("display-prmsl").innerHTML = "<input type='checkbox' id='display-prmsl-cb'" + (displayOptions.displayPRMSL === true ? "checked" : "") + ">";
+  document.getElementById("display-hum").innerHTML   = "<input type='checkbox' id='display-hum-cb'" + (displayOptions.displayHUM === true ? "checked" : "") + ">";
+  document.getElementById("display-volt").innerHTML  = "<input type='checkbox' id='display-volt-cb'" + (displayOptions.displayVOLT === true ? "checked" : "") + ">";
 };
 
 var updatePrms = function()

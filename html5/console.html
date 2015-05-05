@@ -455,27 +455,41 @@
       </p>
     </div>
     <div id="calibration-prms" style="display: none;">
-      <hr>
       <input type="checkbox" id="edit.prms">Edit</input>      
       <hr>
-      <table>
-        <tr><td>BSP Factor</td><td><div id="bsp-factor"></div></td></tr>
-        <tr><td>AWS Factor</td><td><div id="aws-factor"></div></td></tr>
-        <tr><td>AWA Offset</td><td><div id="awa-offset"></div></td></tr>
-        <tr><td>HDG Offset</td><td><div id="hdg-offset"></div></td></tr>
-        <tr><td>Max Leeway</td><td><div id="max-leeway"></div></td></tr>
-        <tr><td>Deviation File</td><td><div id="dev-file"></div></td></tr>
-        <tr><td>Default Decl.</td><td><div id="def-decl"></div></td></tr>
-        <tr><td>Damping</td><td><div id="damping"></div></td></tr>
-        <tr><td>Polar file</td><td><div id="polar-file"></div></td></tr>
-        <tr><td>Polar Speed Factor</td><td><div id="polar-speed-factor"></div></td></tr>
+      <table border="0" cellspacing="10">
+        <tr>
+          <td valign="top">
+            <table>
+              <tr><td>BSP Factor</td><td><div id="bsp-factor"></div></td></tr>
+              <tr><td>AWS Factor</td><td><div id="aws-factor"></div></td></tr>
+              <tr><td>AWA Offset</td><td><div id="awa-offset"></div></td></tr>
+              <tr><td>HDG Offset</td><td><div id="hdg-offset"></div></td></tr>
+              <tr><td>Max Leeway</td><td><div id="max-leeway"></div></td></tr>
+              <tr><td>Deviation File</td><td><div id="dev-file"></div></td></tr>
+              <tr><td>Default Decl.</td><td><div id="def-decl"></div></td></tr>
+              <tr><td>Damping</td><td><div id="damping"></div></td></tr>
+              <tr><td>Polar file</td><td><div id="polar-file"></div></td></tr>
+              <tr><td>Polar Speed Factor</td><td><div id="polar-speed-factor"></div></td></tr>
+            </table>
+          </td>
+          <td valign="top">
+            <table>
+              <tr><td>Display Water Temperature</td><td><div id="display-wt"></div></td></tr>
+              <tr><td>Display Air Temperature</td><td><div id="display-at"></div></td></tr>
+              <tr><td>Display GPS Date &amp; Time</td><td><div id="display-gdt"></div></td></tr>
+              <tr><td>Display Atmospheric Pressure</td><td><div id="display-prmsl"></div></td></tr>
+              <tr><td>Display Relative Humidity</td><td><div id="display-hum"></div></td></tr>
+              <tr><td>Display Battery Voltage</td><td><div id="display-volt"></div></td></tr>
+            </table>
+          </td>
+        </tr>
       </table>
       <hr>
       <button disabled="true" id="update.button" onclick="updatePrms();">Update</button>
       <hr>
     </div>
     <div id="err-mess"></div>
-    <hr>
     <address>The HTML5 Console</address>
   </body>
 </html>

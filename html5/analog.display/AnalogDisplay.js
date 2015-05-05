@@ -51,8 +51,8 @@ var analogDisplayColorConfigBlack =
   valueColor:        'red',
   valueOutlineColor: 'black',
   valueNbDecimal:    1,
-  handColor:         'rgba(0, 0, 100, 0.25)',
-  handOutlineColor:  'blue',
+  handColor:         'rgba(255, 0, 0, 0.4)', // 'rgba(0, 0, 100, 0.25)',
+  handOutlineColor:  'red', // 'blue',
   withHandShadow:    true,
   knobColor:         '#8ED6FF', // Kind of blue
   knobOutlineColor:  'blue',
