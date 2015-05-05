@@ -1129,15 +1129,22 @@ public class HTTPServer
         }
         else if (true) // Extra data
         {
-          try 
-          { 
-  //        str += ("  <obj name='" + URLEncoder.encode(k, "UTF-8") + "'><![CDATA[" + URLEncoder.encode(cached.toString(), "UTF-8") + "]]></obj>\n"); 
-  //        str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(URLEncoder.encode(cached.toString(), "UTF-8"), URLEncoder.encode(k, "UTF-8"), output, CHARACTER_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
-            str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(cached.toString(), k.replace(' ', '_'), output, CHARACTER_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
-            System.out.println(">>> EXTRA >>> " + k + " is a " + cached.getClass().getName() + ":" + cached);
-            first = false;
-          } 
-          catch (Exception ex) { ex.printStackTrace(); }
+          if (cached != null)
+          {
+            try 
+            { 
+    //        str += ("  <obj name='" + URLEncoder.encode(k, "UTF-8") + "'><![CDATA[" + URLEncoder.encode(cached.toString(), "UTF-8") + "]]></obj>\n"); 
+    //        str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(URLEncoder.encode(cached.toString(), "UTF-8"), URLEncoder.encode(k, "UTF-8"), output, CHARACTER_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
+              str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(cached.toString(), k.replace(' ', '_'), output, CHARACTER_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
+              System.out.println(">>> EXTRA >>> " + k + " is a " + cached.getClass().getName() + ":" + cached);
+              first = false;
+            } 
+            catch (Exception ex) { ex.printStackTrace(); }
+          }
+          else
+          {
+            System.out.println("Cahed data is null for key [" + k + "]");
+          }
         }
       }
       // VMG & Perf
