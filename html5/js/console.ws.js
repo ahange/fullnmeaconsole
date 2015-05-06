@@ -157,6 +157,27 @@ var setValues = function(doc)
     var errMess = "";
     
     var json = doc;
+
+    var displayWT    = (json.displayWT !== undefined ? json.displayWT : true);
+    var displayAT    = (json.displayAT !== undefined ? json.displayAT : true);
+    var displayGDT   = (json.displayGDT !== undefined ? json.displayGDT : false);
+    var displayPRMSL = (json.displayPRMSL !== undefined ? json.displayPRMSL : false);
+    var displayHUM   = (json.displayHUM !== undefined ? json.displayHUM : false);
+    var displayVOLT  = (json.displayVOLT !== undefined ? json.displayVOLT : false);
+
+    document.getElementById("display-wt-div").style.display = (displayWT === true ? 'inline' : 'none');
+    document.getElementById("display-wt-title").style.display = (displayWT === true ? 'inline' : 'none');
+    document.getElementById("display-at-div").style.display = (displayAT === true ? 'inline' : 'none');
+    document.getElementById("display-at-title").style.display = (displayAT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-div").style.display = (displayGDT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-title").style.display = (displayGDT === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-div").style.display = (displayPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-title").style.display = (displayPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-hum-div").style.display = (displayHUM === true ? 'inline' : 'none');
+    document.getElementById("display-hum-title").style.display = (displayHUM === true ? 'inline' : 'none');
+    document.getElementById("display-volt-div").style.display = (displayVOLT === true ? 'inline' : 'none');
+    document.getElementById("display-volt-title").style.display = (displayVOLT === true ? 'inline' : 'none');
+
     try
     {
       var latitude  = parseFloat(json.lat);
@@ -490,106 +511,12 @@ var setValues = function(doc)
       displayPRF.setValue(100);
     }
     
-    // Calibration Prms
-    try
-    {
-      document.getElementById("update.button").disabled = !(document.getElementById("edit.prms").checked)
-      if (document.getElementById("edit.prms").checked)  
-      {        
-        if (!editing)
-          populatePrmForEditing(json);
-        editing = true;
-      }
-      else
-      {
-        populatePrmForDisplaying(json);
-        editing = false;
-      }
-    }
-    catch (err)
-    {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with Cal Prms...");
-    }
-    
     if (errMess !== undefined)
       document.getElementById("err-mess").innerHTML = errMess;
   }
   catch (err)
   {
     document.getElementById("err-mess").innerHTML = err;
-  }
-};
-
-var populatePrmForDisplaying = function(json)
-{
-  document.getElementById("bsp-factor").innerHTML         = json.bspfactor;
-  document.getElementById("aws-factor").innerHTML         = json.awsfactor;
-  document.getElementById("awa-offset").innerHTML         = json.awaoffset;
-  document.getElementById("hdg-offset").innerHTML         = json.hdgoffset;
-  document.getElementById("max-leeway").innerHTML         = json.maxleeway;
-  document.getElementById("dev-file").innerHTML           = json.devfile;
-  document.getElementById("def-decl").innerHTML           = json.defaultdecl;
-  document.getElementById("damping").innerHTML            = json.damping;
-  document.getElementById("polar-file").innerHTML         = json.polarfile;
-  document.getElementById("polar-speed-factor").innerHTML = json.polarspeedfactor;
-};
-
-var populatePrmForEditing = function(json)
-{
-  document.getElementById("bsp-factor").innerHTML         = "<input id='new-bsp' type='text' value='" + json.bspfactor + "'>";
-  document.getElementById("aws-factor").innerHTML         = "<input id='new-aws' type='text' value='" + json.awsfactor + "'>";
-  document.getElementById("awa-offset").innerHTML         = "<input id='new-awa' type='text' value='" + json.awaoffset + "'>";
-  document.getElementById("hdg-offset").innerHTML         = "<input id='new-hdg' type='text' value='" + json.hdgoffset + "'>";
-  document.getElementById("max-leeway").innerHTML         = "<input id='new-lwy' type='text' value='" + json.maxleeway + "'>";
-  document.getElementById("dev-file").innerHTML           = "<input id='new-dev' type='text' value='" + json.devfile + "'>";
-  document.getElementById("def-decl").innerHTML           = "<input id='new-dec' type='text' value='" + json.defaultdecl + "'>";
-  document.getElementById("damping").innerHTML            = "<input id='new-dpg' type='text' value='" + json.damping + "'>";
-  document.getElementById("polar-file").innerHTML         = "<input id='new-pol' type='text' value='" + json.polarfile + "'>";
-  document.getElementById("polar-speed-factor").innerHTML = "<input id='new-fac' type='text' value='" + json.polarspeedfactor + "'>";
-};
-
-var updatePrms = function()
-{
-  try
-  {
-    var bsp = parseFloat(document.getElementById('new-bsp').value);
-    var aws = parseFloat(document.getElementById('new-aws').value);
-    var awa = parseFloat(document.getElementById('new-awa').value);
-    var hdg = parseFloat(document.getElementById('new-hdg').value);
-    var lwy = parseFloat(document.getElementById('new-lwy').value);
-    var dev = document.getElementById('new-dev').value;
-    var dec = parseFloat(document.getElementById('new-dec').value);
-    var dpg = parseInt(document.getElementById('new-dpg').value);
-    var pol = document.getElementById('new-pol').value;
-    var fac = parseFloat(document.getElementById('new-fac').value);
-    // Send values to server
-    try
-    {
-      var updateXHR = new XMLHttpRequest();
-      var qString = "?bsp=" + encodeURIComponent(bsp) + 
-                    "&aws=" + encodeURIComponent(aws) + 
-                    "&awa=" + encodeURIComponent(awa) + 
-                    "&hdg=" + encodeURIComponent(hdg) + 
-                    "&lwy=" + encodeURIComponent(lwy) + 
-                    "&dev=" + encodeURIComponent(dev) + 
-                    "&dec=" + encodeURIComponent(dec) + 
-                    "&dpg=" + encodeURIComponent(dpg) + 
-                    "&pol=" + encodeURIComponent(pol) + 
-                    "&fac=" + encodeURIComponent(fac);
-      updateXHR.open("GET", "/update-prms" + qString, true);
-//    xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-      updateXHR.send();
-      var resp = updateXHR.responseText; 
-      console.log("Update completed");
-    }
-    catch (err)
-    {
-      console.log(err);
-    }
-  }
-  catch (err)
-  {
-    console.log(err);
   }
 };
 
