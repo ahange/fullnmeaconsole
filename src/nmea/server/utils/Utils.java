@@ -678,16 +678,16 @@ public class Utils
           else if (type.equals(StringGenerator.XDRTypes.PRESSURE_B))
           {
             if (ndc == null)
-              NMEAContext.getInstance().putDataCache(NMEADataCache.BARO_PRESS, val);
+              NMEAContext.getInstance().putDataCache(NMEADataCache.BARO_PRESS, new Pressure(val * 1000));
             else
-              ndc.put(NMEADataCache.BARO_PRESS, val);
+              ndc.put(NMEADataCache.BARO_PRESS, new Pressure(val * 1000));
           }
           else if (type.equals(StringGenerator.XDRTypes.VOLTAGE))
           {
             if (ndc == null)
-              NMEAContext.getInstance().putDataCache(NMEADataCache.BATTERY, val);
+              NMEAContext.getInstance().putDataCache(NMEADataCache.BATTERY, new Float(val));
             else
-              ndc.put(NMEADataCache.BATTERY, val);
+              ndc.put(NMEADataCache.BATTERY, new Float(val));
           }
           else
           {

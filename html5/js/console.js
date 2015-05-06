@@ -189,6 +189,27 @@ var pingNMEAConsole = function()
     doc = xhr.responseXML; 
     var errMess = "";
     
+    var showWT = true, showAT = false, showGDT = false, showPRMSL = false, showHUM = false, showVOLT = false;
+    try { showWT = ("true" === doc.getElementsByTagName("Display_Web_Water_Temp")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showAT = ("true" === doc.getElementsByTagName("Display_Web_Air_Temp")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showGDT = ("true" === doc.getElementsByTagName("Display_Web_GPSDateTime")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showPRMSL = ("true" === doc.getElementsByTagName("Display_Web_PRMSL")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showHUM = ("true" === doc.getElementsByTagName("Display_Web_HUM")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showVOLT = ("true" === doc.getElementsByTagName("Display_Web_Volt")[0].childNodes[0].nodeValue); } catch (err) {}
+    
+    document.getElementById("display-wt-div").style.display = (showWT === true ? 'inline' : 'none');
+    document.getElementById("display-wt-title").style.display = (showWT === true ? 'inline' : 'none');
+    document.getElementById("display-at-div").style.display = (showAT === true ? 'inline' : 'none');
+    document.getElementById("display-at-title").style.display = (showAT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-div").style.display = (showGDT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-title").style.display = (showGDT === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-div").style.display = (showPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-title").style.display = (showPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-hum-div").style.display = (showHUM === true ? 'inline' : 'none');
+    document.getElementById("display-hum-title").style.display = (showHUM === true ? 'inline' : 'none');
+    document.getElementById("display-volt-div").style.display = (showVOLT === true ? 'inline' : 'none');
+    document.getElementById("display-volt-title").style.display = (showVOLT === true ? 'inline' : 'none');
+
     try
     {
       var latitude  = parseFloat(doc.getElementsByTagName("lat")[0].childNodes[0].nodeValue);
@@ -316,17 +337,21 @@ var pingNMEAConsole = function()
 //    displayTWS.animate(0.0);
       displayTWS.setValue(0.0);
     }
-    try
+
+    if (showWT)
     {
-      var waterTemp = parseFloat(doc.getElementsByTagName("wtemp")[0].childNodes[0].nodeValue);
-//    thermometer.animate(waterTemp);
-      thermometer.setValue(waterTemp);
-    }
-    catch (err)
-    {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with water temperature...");
-//    thermometer.animate(0.0);
-      thermometer.setValue(0.0);
+      try
+      {
+        var waterTemp = parseFloat(doc.getElementsByTagName("wtemp")[0].childNodes[0].nodeValue);
+//      thermometer.animate(waterTemp);
+        thermometer.setValue(waterTemp);
+      }
+      catch (err)
+      {
+        errMess += ((errMess.length > 0?"\n":"") + "Problem with water temperature...");
+//      thermometer.animate(0.0);
+        thermometer.setValue(0.0);
+      }
     }
     try
     {
@@ -545,95 +570,6 @@ var pingNMEAConsole = function()
   catch (err)
   {
     document.getElementById("err-mess").innerHTML = err;
-  }
-};
-
-var populatePrmForDisplaying = function(doc)
-{
-  document.getElementById("bsp-factor").innerHTML         = doc.getElementsByTagName("bsp-factor")[0].childNodes[0].nodeValue;
-  document.getElementById("aws-factor").innerHTML         = doc.getElementsByTagName("aws-factor")[0].childNodes[0].nodeValue;
-  document.getElementById("awa-offset").innerHTML         = doc.getElementsByTagName("awa-offset")[0].childNodes[0].nodeValue;
-  document.getElementById("hdg-offset").innerHTML         = doc.getElementsByTagName("hdg-offset")[0].childNodes[0].nodeValue;
-  document.getElementById("max-leeway").innerHTML         = doc.getElementsByTagName("max-leeway")[0].childNodes[0].nodeValue;
-  document.getElementById("dev-file").innerHTML           = doc.getElementsByTagName("dev-file")[0].childNodes[0].nodeValue;
-  document.getElementById("def-decl").innerHTML           = doc.getElementsByTagName("default-decl")[0].childNodes[0].nodeValue;
-  document.getElementById("damping").innerHTML            = doc.getElementsByTagName("damping")[0].childNodes[0].nodeValue;
-  document.getElementById("polar-file").innerHTML         = doc.getElementsByTagName("polar-file")[0].childNodes[0].nodeValue;
-  document.getElementById("polar-speed-factor").innerHTML = doc.getElementsByTagName("polar-speed-factor")[0].childNodes[0].nodeValue;
-
-  // TODO For real
-  document.getElementById("display-wt").innerHTML    = "&nbsp;&nbsp;" + (displayOptions.displayWT    === true ? "Y" : "N");
-  document.getElementById("display-at").innerHTML    = "&nbsp;&nbsp;" + (displayOptions.displayAT    === true ? "Y" : "N");
-  document.getElementById("display-gdt").innerHTML   = "&nbsp;&nbsp;" + (displayOptions.displayGDT   === true ? "Y" : "N");
-  document.getElementById("display-prmsl").innerHTML = "&nbsp;&nbsp;" + (displayOptions.displayPRMSL === true ? "Y" : "N");
-  document.getElementById("display-hum").innerHTML   = "&nbsp;&nbsp;" + (displayOptions.displayHUM   === true ? "Y" : "N");
-  document.getElementById("display-volt").innerHTML  = "&nbsp;&nbsp;" + (displayOptions.displayVOLT  === true ? "Y" : "N");
-};
-
-var populatePrmForEditing = function(doc)
-{
-  document.getElementById("bsp-factor").innerHTML         = "<input id='new-bsp' type='text' value='" + doc.getElementsByTagName("bsp-factor")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("aws-factor").innerHTML         = "<input id='new-aws' type='text' value='" + doc.getElementsByTagName("aws-factor")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("awa-offset").innerHTML         = "<input id='new-awa' type='text' value='" + doc.getElementsByTagName("awa-offset")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("hdg-offset").innerHTML         = "<input id='new-hdg' type='text' value='" + doc.getElementsByTagName("hdg-offset")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("max-leeway").innerHTML         = "<input id='new-lwy' type='text' value='" + doc.getElementsByTagName("max-leeway")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("dev-file").innerHTML           = "<input id='new-dev' type='text' value='" + doc.getElementsByTagName("dev-file")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("def-decl").innerHTML           = "<input id='new-dec' type='text' value='" + doc.getElementsByTagName("default-decl")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("damping").innerHTML            = "<input id='new-dpg' type='text' value='" + doc.getElementsByTagName("damping")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("polar-file").innerHTML         = "<input id='new-pol' type='text' value='" + doc.getElementsByTagName("polar-file")[0].childNodes[0].nodeValue + "'>";
-  document.getElementById("polar-speed-factor").innerHTML = "<input id='new-fac' type='text' value='" + doc.getElementsByTagName("polar-speed-factor")[0].childNodes[0].nodeValue + "'>";
-
-  // TODO For real
-  document.getElementById("display-wt").innerHTML    = "<input type='checkbox' id='display-wt-cb'" + (displayOptions.displayWT === true ? "checked" : "") + ">";
-  document.getElementById("display-at").innerHTML    = "<input type='checkbox' id='display-at-cb'" + (displayOptions.displayAT === true ? "checked" : "") + ">";
-  document.getElementById("display-gdt").innerHTML   = "<input type='checkbox' id='display-gdt-cb'" + (displayOptions.displayGDT === true ? "checked" : "") + ">";
-  document.getElementById("display-prmsl").innerHTML = "<input type='checkbox' id='display-prmsl-cb'" + (displayOptions.displayPRMSL === true ? "checked" : "") + ">";
-  document.getElementById("display-hum").innerHTML   = "<input type='checkbox' id='display-hum-cb'" + (displayOptions.displayHUM === true ? "checked" : "") + ">";
-  document.getElementById("display-volt").innerHTML  = "<input type='checkbox' id='display-volt-cb'" + (displayOptions.displayVOLT === true ? "checked" : "") + ">";
-};
-
-var updatePrms = function()
-{
-  try
-  {
-    var bsp = parseFloat(document.getElementById('new-bsp').value);
-    var aws = parseFloat(document.getElementById('new-aws').value);
-    var awa = parseFloat(document.getElementById('new-awa').value);
-    var hdg = parseFloat(document.getElementById('new-hdg').value);
-    var lwy = parseFloat(document.getElementById('new-lwy').value);
-    var dev = document.getElementById('new-dev').value;
-    var dec = parseFloat(document.getElementById('new-dec').value);
-    var dpg = parseInt(document.getElementById('new-dpg').value);
-    var pol = document.getElementById('new-pol').value;
-    var fac = parseFloat(document.getElementById('new-fac').value);
-    // Send values to server
-    try
-    {
-      var updateXHR = new XMLHttpRequest();
-      var qString = "?bsp=" + encodeURIComponent(bsp) + 
-                    "&aws=" + encodeURIComponent(aws) + 
-                    "&awa=" + encodeURIComponent(awa) + 
-                    "&hdg=" + encodeURIComponent(hdg) + 
-                    "&lwy=" + encodeURIComponent(lwy) + 
-                    "&dev=" + encodeURIComponent(dev) + 
-                    "&dec=" + encodeURIComponent(dec) + 
-                    "&dpg=" + encodeURIComponent(dpg) + 
-                    "&pol=" + encodeURIComponent(pol) + 
-                    "&fac=" + encodeURIComponent(fac);
-      updateXHR.open("GET", "/update-prms" + qString, true);
-//    xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-      updateXHR.send();
-      var resp = updateXHR.responseText; 
-      console.log("Update completed");
-    }
-    catch (err)
-    {
-      console.log(err);
-    }
-  }
-  catch (err)
-  {
-    console.log(err);
   }
 };
 

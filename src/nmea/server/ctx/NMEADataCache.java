@@ -83,6 +83,13 @@ public class NMEADataCache extends HashMap<String, Object> implements Serializab
   public static final String POLAR_FACTOR    = "Polar Factor";
 
   public static final String TIME_RUNNING    = "Time Running";
+  
+  public static final String DISPLAY_WEB_WT    = "Display Web Water Temp";
+  public static final String DISPLAY_WEB_AT    = "Display Web Air Temp";
+  public static final String DISPLAY_WEB_GDT   = "Display Web GPSDateTime";
+  public static final String DISPLAY_WEB_PRMSL = "Display Web PRMSL";
+  public static final String DISPLAY_WEB_HUM   = "Display Web HUM";
+  public static final String DISPLAY_WEB_VOLT  = "Display Web Volt";
 
   private final static boolean DEBUG = false;
 
@@ -173,6 +180,14 @@ public class NMEADataCache extends HashMap<String, Object> implements Serializab
     TOOLTIP_MAP.put(POLAR_FACTOR,    "Coefficient to apply to the target speed.");
     TOOLTIP_MAP.put(PERF,            "Performance, calculated with the polars");
     TOOLTIP_MAP.put(TIME_RUNNING,    "NMEA Server (cache) has been running for 'X' ms");
+    
+    TOOLTIP_MAP.put(DISPLAY_WEB_WT,    "Display Web Water Temp");
+    TOOLTIP_MAP.put(DISPLAY_WEB_AT,    "Display Web Air Temp");
+    TOOLTIP_MAP.put(DISPLAY_WEB_GDT,   "Display Web GPSDateTime");
+    TOOLTIP_MAP.put(DISPLAY_WEB_PRMSL, "Display Web PRMSL");
+    TOOLTIP_MAP.put(DISPLAY_WEB_HUM,   "Display Web Humidity");
+    TOOLTIP_MAP.put(DISPLAY_WEB_VOLT,  "Display Web Volt");
+
 
     dampingMap.put(BSP,      new ArrayList<Object>());
     dampingMap.put(HDG_TRUE, new ArrayList<Object>());

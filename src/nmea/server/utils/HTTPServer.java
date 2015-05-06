@@ -443,6 +443,7 @@ public class HTTPServer
     return enabled;
   }
 
+  // TODO Renmove this
   private enum CacheToQSMatch
   {
     BSP_FACTOR("bsp", NMEADataCache.BSP_FACTOR),
@@ -469,6 +470,7 @@ public class HTTPServer
     public String key() { return this.key; }
   }
   
+  // TODO Remove this
   private void updateCalParams(String line)
   {
     try
@@ -1143,7 +1145,7 @@ public class HTTPServer
           }
           else
           {
-            System.out.println("Cahed data is null for key [" + k + "]");
+            System.out.println(">>> Oops EXTRA >>> Cached data is null for key [" + k + "]");
           }
         }
       }
@@ -1226,6 +1228,8 @@ public class HTTPServer
         str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(Integer.toString(damping), "damping", output, NUMERIC_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
         str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(polarFile, "polar-file", output, CHARACTER_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
         str += (((!first && output == JSON_OUTPUT)?",\n":"") + "  " + dataFormat(Double.toString(polarFactor), "polar-speed-factor", output, NUMERIC_OPTION) + ((output != JSON_OUTPUT)?"\n":""));
+        
+        // TODO Get the display options (WT, AT, GPS, PRMSL, HUM, VOLT)
       }
       catch (Exception ex)
       {
