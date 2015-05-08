@@ -18,11 +18,40 @@
     <!--script type="text/javascript" src="js/widgets/AnalogDisplay.js"></script-->
     <script type="text/javascript" src="js/admin.console.js"></script>
     <script type="text/javascript">
+  
   window.onload = function()
   {
     init();
+    // Get query string prms
+    var theme = getQSPrm('theme');
+    if (theme !== undefined) {
+      changeTheme(theme);
+      var rb = document.getElementsByName('theme');
+      for (var i=0; i<rb.length; i++) {
+        rb[i].checked = (rb[i].value === theme);
+      }
+    }
   };
   
+  var getQSPrm = function(prm)
+  {
+    var value;
+    var loc = document.location.toString();
+    if (loc.indexOf("?") > -1) {
+      var qs = loc.substring(loc.indexOf("?") + 1);
+      var prms = qs.split('&');
+      for (var i=0; i<prms.length; i++) {
+        var nv = prms[i].split('=');
+        if (nv.length === 2) {
+          if (nv[0] === prm) {
+            return nv[1];
+          }
+        }
+      }
+    }
+    return value;
+  };      
+
   var changeTheme = function(value)
   {
     var cssLink = document.getElementById("theme");

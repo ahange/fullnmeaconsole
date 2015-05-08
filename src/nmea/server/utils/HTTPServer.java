@@ -352,9 +352,12 @@ public class HTTPServer
             }
             else if (fileToFetch.trim().length() > 0)
             {
+              if (fileToFetch.indexOf("?") > -1)
+                fileToFetch = fileToFetch.substring(0, fileToFetch.indexOf("?"));
+
               File f = new File(fileToFetch);
               if (!f.exists())
-                out.println(fileToFetch + " not found from " + System.getProperty("user.dir"));
+                out.println("From " + this.getClass().getName() + ", " + fileToFetch + " not found from " + System.getProperty("user.dir"));
               else
               {
                 if (fileToFetch.toUpperCase().endsWith(".HTML") ||

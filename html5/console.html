@@ -32,13 +32,32 @@
     <script type="text/javascript" src="js/widgets/TWSEvolution.js"></script>
     <script type="text/javascript" src="js/console.js"></script>
     <script type="text/javascript">
+
+  var getQSPrm = function(prm)
+  {
+    var value;
+    var loc = document.location.toString();
+    if (loc.indexOf("?") > -1) {
+      var qs = loc.substring(loc.indexOf("?") + 1);
+      var prms = qs.split('&');
+      for (var i=0; i<prms.length; i++) {
+        var nv = prms[i].split('=');
+        if (nv.length === 2) {
+          if (nv[0] === prm) {
+            return nv[1];
+          }
+        }
+      }
+    }
+    return value;
+  };      
+
   var showMap = function()
   {
     document.getElementById('map').style.display = 'inline';
     document.getElementById('displays').style.display = 'none';
     document.getElementById('overview').style.display = 'none';
     document.getElementById('twd-evolution').style.display = 'none';
-    document.getElementById('calibration-prms').style.display = 'none';
 
     document.getElementById('showMap').style.textDecoration = 'none';
     document.getElementById('showDisplays').style.textDecoration = 'underline';
@@ -51,7 +70,6 @@
     document.getElementById('displays').style.display = 'inline';
     document.getElementById('overview').style.display = 'none';
     document.getElementById('twd-evolution').style.display = 'none';
-    document.getElementById('calibration-prms').style.display = 'none';
 
     document.getElementById('showMap').style.textDecoration = 'underline';
     document.getElementById('showDisplays').style.textDecoration = 'none';
@@ -64,7 +82,6 @@
     document.getElementById('displays').style.display = 'none';
     document.getElementById('overview').style.display = 'inline';
     document.getElementById('twd-evolution').style.display = 'none';
-    document.getElementById('calibration-prms').style.display = 'none';
 
     document.getElementById('showMap').style.textDecoration = 'underline';
     document.getElementById('showDisplays').style.textDecoration = 'underline';
@@ -77,7 +94,6 @@
     document.getElementById('displays').style.display = 'none';
     document.getElementById('overview').style.display = 'none';
     document.getElementById('twd-evolution').style.display = 'inline';
-    document.getElementById('calibration-prms').style.display = 'none';
 
     document.getElementById('showMap').style.textDecoration = 'underline';
     document.getElementById('showDisplays').style.textDecoration = 'underline';
@@ -90,6 +106,20 @@
     init();
 //  console.log("Evaluating window size");
     resizeComponents();
+    var theme = getQSPrm('theme');
+    if (theme !== undefined) {
+      changeTheme(theme);
+      var rb = document.getElementsByName('theme');
+      for (var i=0; i<rb.length; i++) {
+        rb[i].checked = (rb[i].value === theme);
+      }
+    }
+    var border = getQSPrm('border');
+    if (border !== undefined) {
+      changeBorder(border === 'Y');
+      var cb = document.getElementById('with-border');
+      cb.checked = (border === 'Y');
+    }
   };
   
   window.onresize = function()

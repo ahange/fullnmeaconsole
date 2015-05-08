@@ -52,6 +52,9 @@ function handler (req, res)
   if (req.url.startsWith("/data/")) // Static resource
   {
     var resource = req.url.substring("/data/".length);
+    if (resource.indexOf("?") > -1) {
+      resource = resource.substring(0, resource.indexOf("?"));
+    }
     console.log('Loading static ' + req.url + " (" + resource + ")");
     fs.readFile(__dirname + '/' + resource,
                 function (err, data)
