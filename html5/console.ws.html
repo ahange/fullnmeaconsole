@@ -12,6 +12,24 @@
         border: 1px solid #9C9898;
         opacity:0.75;
       }
+      
+      .selectedButton {
+        padding:5px; 
+        border-radius:5px; 
+        border:1px solid gray; 
+        margin-top:10px; 
+        border-bottom: none;
+        font-size: 18px;
+      }
+
+      .unselectedButton {
+        padding:5px; 
+        border-radius:5px; 
+        border:1px solid gray; 
+        margin-top:10px; 
+        border-bottom: 1px solid gray;
+        font-size: 12px;
+      }
     </style>
     <link rel="stylesheet" href="css/black.css" type="text/css" id="theme"/>
     <script type="text/javascript" src="js/date.proto.js"></script>
@@ -52,53 +70,34 @@
     return value;
   };      
 
+  var setup = function(b1, b2, b3, b4)
+  {
+    document.getElementById('displays').style.display = (b1 === true ? 'inline' : 'none');
+    document.getElementById('overview').style.display = (b2 === true ? 'inline' : 'none');
+    document.getElementById('map').style.display = (b3 === true ? 'inline' : 'none');
+    document.getElementById('twd-evolution').style.display = (b4 === true ? 'inline' : 'none');
+
+    document.getElementById('showDisplays').className = (b1 === true ? 'selectedButton' : 'unselectedButton');
+    document.getElementById('showOverview').className = (b2 === true ? 'selectedButton' : 'unselectedButton');
+    document.getElementById('showMap').className = (b3 === true ? 'selectedButton' : 'unselectedButton');
+    document.getElementById('showTWDEvolution').className = (b4 === true ? 'selectedButton' : 'unselectedButton');
+  };  
+
   var showMap = function()
   {
-    document.getElementById('map').style.display = 'inline';
-    document.getElementById('displays').style.display = 'none';
-    document.getElementById('overview').style.display = 'none';
-    document.getElementById('twd-evolution').style.display = 'none';
-
-    document.getElementById('showMap').style.textDecoration = 'none';
-    document.getElementById('showDisplays').style.textDecoration = 'underline';
-    document.getElementById('showOverview').style.textDecoration = 'underline';
-    document.getElementById('showTWDEvolution').style.textDecoration = 'underline';
+    setup(false, false, true, false);
   };  
   var showDisplays = function()
   {
-    document.getElementById('map').style.display = 'none';
-    document.getElementById('displays').style.display = 'inline';
-    document.getElementById('overview').style.display = 'none';
-    document.getElementById('twd-evolution').style.display = 'none';
-
-    document.getElementById('showMap').style.textDecoration = 'underline';
-    document.getElementById('showDisplays').style.textDecoration = 'none';
-    document.getElementById('showOverview').style.textDecoration = 'underline';
-    document.getElementById('showTWDEvolution').style.textDecoration = 'underline';
+    setup(true, false, false, false);
   };  
   var showOverview = function()
   {
-    document.getElementById('map').style.display = 'none';
-    document.getElementById('displays').style.display = 'none';
-    document.getElementById('overview').style.display = 'inline';
-    document.getElementById('twd-evolution').style.display = 'none';
-
-    document.getElementById('showMap').style.textDecoration = 'underline';
-    document.getElementById('showDisplays').style.textDecoration = 'underline';
-    document.getElementById('showOverview').style.textDecoration = 'none';
-    document.getElementById('showTWDEvolution').style.textDecoration = 'underline';
+    setup(false, true, false, false);
   };    
   var showTWDEvolution = function()
   {
-    document.getElementById('map').style.display = 'none';
-    document.getElementById('displays').style.display = 'none';
-    document.getElementById('overview').style.display = 'none';
-    document.getElementById('twd-evolution').style.display = 'inline';
-
-    document.getElementById('showMap').style.textDecoration = 'underline';
-    document.getElementById('showDisplays').style.textDecoration = 'underline';
-    document.getElementById('showOverview').style.textDecoration = 'underline';
-    document.getElementById('showTWDEvolution').style.textDecoration = 'none';
+    setup(false, false, false, true);
   };
   
   window.onload = function()
@@ -244,10 +243,15 @@
       </tr>
     </table-->
     <small>
-      <button id="showDisplays" onclick="showDisplays();">Displays</button>&nbsp;
+      <!--button id="showDisplays" onclick="showDisplays();">Displays</button>&nbsp;
       <button id="showOverview" onclick="showOverview();">Overview</button>&nbsp;
       <button id="showMap" onclick="showMap();">Map</button>&nbsp;
-      <button id="showTWDEvolution" onclick="showTWDEvolution();">TW Evolution</button>
+      <button id="showTWDEvolution" onclick="showTWDEvolution();">TW Evolution</button-->
+
+      <span id="showDisplays" onclick="showDisplays();" class="selectedButton">Displays</span>
+      <span id="showOverview" onclick="showOverview();" class="unselectedButton">Overview</span>
+      <span id="showMap" onclick="showMap();" class="unselectedButton">Map</span>
+      <span id="showTWDEvolution" onclick="showTWDEvolution();" class="unselectedButton">TW Evolution</span>
     </small>
     <!--select id="theme-select" onchange="changeTheme();">
       <option value="black" selected>Black theme</option>

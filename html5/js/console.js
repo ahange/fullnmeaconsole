@@ -543,27 +543,6 @@ var pingNMEAConsole = function()
       displayPRF.setValue(100);
     }
     
-    // Calibration Prms
-    try
-    {
-      document.getElementById("update.button").disabled = !(document.getElementById("edit.prms").checked)
-      if (document.getElementById("edit.prms").checked)  
-      {        
-        if (!editing)
-          populatePrmForEditing(doc);
-        editing = true;
-      }
-      else
-      {
-        populatePrmForDisplaying(doc);
-        editing = false;
-      }
-    }
-    catch (err)
-    {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with Cal Prms...");
-    }
-    
     if (errMess !== undefined)
       document.getElementById("err-mess").innerHTML = errMess;
   }

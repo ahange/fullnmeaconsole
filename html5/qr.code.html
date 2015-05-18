@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta charset="windows-1252"-->
+    <!--meta charset="iso-8859-1"-->
+    <!--meta charset="utf-8"-->
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <title>NMEA Console Data - QR Codes</title>
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css"/>
+    <style type="text/css">
+      .displayCanvas {
+        border: 1px solid #9C9898;
+        opacity:0.75;
+      }
+    </style>
+    <script type="text/javascript" src="qrcodejs/jquery.min.js"></script>
+    <script type="text/javascript" src="qrcodejs/qrcode.js"></script>
+    <script type="text/javascript">
+  
+  window.onload = function()
+  {
+    document.getElementById('server-ip').value = document.location.hostname;
+    makeCode();
+  };
+  
+    </script>
+  </head>
+  <body>
+    <h2>Web Console Preferences &amp; Administration</h2>
+    <h3>QR Codes Generator</h3>
+    <hr>
+    Generate the QR code for the URL you want, and scan it with the QR Code scanner of your tablet or smart-phone.
+    <hr>
+    <table cellspacing="10">
+      <tr>
+        <td valign="top">
+    <table>
+      <tr>
+        <td>Server's name or IP address</td><td><input id="server-ip" type="text" value="192.168.1.1" style="width:200px;" placeholder="Name or IP"/></td>
+      </tr>
+      <tr>
+        <td>HTML5 data port</td><td><input id="data-port" type="text" value="9999" style="width:100px; text-align: right;" placeholder="Data port"/></td>
+      </tr>
+      <tr>
+        <td>Admin port</td><td><input id="admin-port" type="text" value="8888" style="width:100px; text-align: right;" placeholder="Admin port"/></td>
+      </tr>
+      <tr>
+        <td>WebSocket port</td><td><input id="ws-port" type="text" value="9876" style="width:100px; text-align: right;" placeholder="WebSocket port"/></td>
+      </tr>
+      <tr>
+        <td>Theme</td>
+        <td>
+          <input type="radio" name="scheme" id="scBlack" value="black" checked>Night&nbsp;
+          <input type="radio" name="scheme" id="scWhite" value="white">Day&nbsp;          
+        </td>
+      </tr>
+      <tr>
+        <td>Border</td>
+        <td>
+          <input type="checkbox" id="display-with-border" checked>With Display Border
+        </td>
+      </tr>
+      <tr>
+        <td>Data type</td>
+        <td>
+          <input type="radio" name="ad" id="rData" value="data" checked>HTML&nbsp;
+          <input type="radio" name="ad" id="rWS" value="admin">WebSocket&nbsp;                    
+          <input type="radio" name="ad" id="rAdmin" value="admin">Admin&nbsp;                    
+        </td>
+      </tr>
+    </table>
+        </td>
+        <td valign="top">
+    <table>
+      <tr>
+        <td valign="top">
+          <div id="url-2-display"></div>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <div id="qrcode" style="width:250px; height:250px; margin-top:15px;"></div>
+            <script type="text/javascript">
+
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+  width:  250,
+  height: 250
+});
+
+var makeCode = function() {    
+  var server = document.getElementById("server-ip");
+  var dataport = document.getElementById("data-port");
+  var adminport = document.getElementById("admin-port");
+  var wsport = document.getElementById("ws-port");
+  var scheme = document.getElementsByName("scheme");
+  var wb = document.getElementById("display-with-border");
+  var ad = document.getElementsByName("ad");
+  
+  var port = (ad[0].checked === true ? dataport.value : (ad[1].checked === true ? wsport.value : adminport.value));
+  var prefix = (ad[0].checked === true ? 'html5' : (ad[1].checked === true ? 'data' :  'html5'));
+  var page   = (ad[0].checked === true ? 'console.html' : (ad[1].checked === true ? 'console.ws.html' :  'admin.html'));
+
+  var admin = (ad[2].checked === true);
+
+  var toDisplay = 'http://' + server.value + ':' + 
+                  port + 
+                  '/' + prefix + '/' + page; 
+  if (admin !== true) {
+    toDisplay += '?theme=' + (scheme[0].checked === true ? scheme[0].value : scheme[1].value) + 
+                 '&border=' + (wb.checked ? 'Y' : 'N');
+  }
+
+  try { document.getElementById("url-2-display").innerHTML = "<a href='" + toDisplay + "' target='test' title='Test me'>" + toDisplay + "</a>"; }
+  catch (err) {}
+
+  qrcode.makeCode(toDisplay);
+};
+
+makeCode();
+
+$("#server-ip").on("blur", function() {
+          makeCode();
+        }).on("keydown", function(e) {
+          if (true || e.keyCode == 13) {
+            makeCode();
+          }
+        });
+$("#data-port").on("blur", function() {
+          makeCode();
+        }).on("keydown", function(e) {
+          if (true || e.keyCode == 13) {
+            makeCode();
+          }
+        });
+$("#admin-port").on("blur", function() {
+          makeCode();
+        }).on("keydown", function(e) {
+          if (true || e.keyCode == 13) {
+            makeCode();
+          }
+        });
+$("#ws-port").on("blur", function() {
+          makeCode();
+        }).on("keydown", function(e) {
+          if (true || e.keyCode == 13) {
+            makeCode();
+          }
+        });
+$("#display-with-border").on("click", function() {
+  makeCode();
+});
+$("#rData, #rAdmin, #rWS").change(function() {
+  makeCode();
+});
+
+$("#scBlack, #scWhite").change(function() {
+  makeCode();
+});
+          </script>
+        </td>
+      </tr>
+    </table>
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <address>The HTML5 Admin Console. QR Codes</address>
+  </body>
+</html>
