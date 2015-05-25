@@ -12,22 +12,22 @@
         border: 1px solid #9C9898;
         opacity:0.75;
       }
-
+      
       .selectedButton {
-      	padding:5px; 
-      	border-radius:5px; 
-      	border:1px solid gray; 
-      	margin-top:10px; 
-      	border-bottom: none;
+        padding:5px; 
+        border-radius:5px; 
+        border:1px solid gray; 
+        margin-top:10px; 
+        border-bottom: none;
         font-size: 18px;
       }
 
       .unselectedButton {
-      	padding:5px; 
-      	border-radius:5px; 
-      	border:1px solid gray; 
-      	margin-top:10px; 
-      	border-bottom: 1px solid gray;
+        padding:5px; 
+        border-radius:5px; 
+        border:1px solid gray; 
+        margin-top:10px; 
+        border-bottom: 1px solid gray;
         font-size: 12px;
       }
     </style>
@@ -48,9 +48,12 @@
     <script type="text/javascript" src="js/widgets/TimeDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/TWDEvolution.js"></script>
     <script type="text/javascript" src="js/widgets/TWSEvolution.js"></script>
+    <script type="text/javascript" src="js/pub.sub.js"></script>
+    <script type="text/javascript" src="js/ajax.manager.js"></script>
+    <script type="text/javascript" src="js/ws.manager.js"></script>
     <script type="text/javascript" src="js/console.js"></script>
     <script type="text/javascript">
-
+    
   var getQSPrm = function(prm)
   {
     var value;
@@ -85,24 +88,34 @@
 
   var showMap = function()
   {
-  	setup(false, false, true, false);
+    setup(false, false, true, false);
   };  
   var showDisplays = function()
   {
-  	setup(true, false, false, false);
+    setup(true, false, false, false);
   };  
   var showOverview = function()
   {
-  	setup(false, true, false, false);
+    setup(false, true, false, false);
   };    
   var showTWDEvolution = function()
   {
-  	setup(false, false, false, true);
+    setup(false, false, false, true);
   };
   
+  var flavor = 'Ajax'; // Default
+
   window.onload = function()
   {
-    init();
+    init(); // init UI
+    var type = getQSPrm('type');
+    if (type === 'WS') {
+      initWS();
+      flavor = 'WebSocket';
+    } else {
+      initAjax();
+    }
+    document.getElementById("console-type").innerHTML = 'The HTML5 ' + flavor + ' Console.';
 //  console.log("Evaluating window size");
     resizeComponents();
     var theme = getQSPrm('theme');
@@ -119,8 +132,191 @@
       var cb = document.getElementById('with-border');
       cb.checked = (border === 'Y');
     }
+    // Subscribers here
+    events.subscribe('show-hide-wt', function(val) {
+      document.getElementById("display-wt-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-wt-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('show-hide-at', function(val) {
+      document.getElementById("display-at-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-at-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('show-hide-gdt', function(val) {
+      document.getElementById("display-gdt-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-gdt-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('show-hide-prmsl', function(val) {
+      document.getElementById("display-prmsl-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-prmsl-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('show-hide-hum', function(val) {
+      document.getElementById("display-hum-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-hum-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('show-hide-volt', function(val) {
+      document.getElementById("display-volt-div").style.display = (val === true ? 'inline' : 'none');
+      document.getElementById("display-volt-title").style.display = (val === true ? 'inline' : 'none');
+    });
+    events.subscribe('pos', function(val) {
+      var label = "Your position";
+      // Plot the station on the map
+      var mapFrame = document.getElementById("map-frame");
+      var canvas = "mapCanvas";
+      mapFrame.contentWindow.plotPosToCanvas(canvas, val.lat, val.lng, label);
+    });
+    events.subscribe('bsp', function(val) {
+//    displayBSP.animate(bsp);
+      displayBSP.setValue(val);
+      displayOverview.setBSP(val);
+      jumboBSP.setValue(val.toFixed(2));
+    });
+    events.subscribe('log', function(val) {
+      displayLog.setValue(val);
+    });
+    events.subscribe('gps-time', function(val) {
+      displayDate.setValue(val);
+      displayTime.setValue(val);
+    });
+    events.subscribe('hdg', function(val) {
+//    displayHDG.animate(val);
+      displayHDG.setValue(val);
+      displayOverview.setHDG(val);
+      jumboHDG.setValue(lpad(Math.round(val).toString(), '0', 3));
+      rose.setValue(Math.round(val));
+    });
+    events.subscribe('twd', function(val) {
+//    displayTWD.animate(val);
+      displayTWD.setValue(val);
+      displayOverview.setTWD(val);
+      jumboTWD.setValue(lpad(Math.round(val).toString(), '0', 3));
+      twdEvolution.addTWD({ "angle": val, 
+                            "time": (new Date()).getTime() });
+    });
+    events.subscribe('twa', function(val) {
+      val = val.toFixed(0);
+      displayOverview.setTWA(val);
+      var twaStr = lpad(Math.round(Math.abs(val)).toString(), '0', 3);
+      if (val < 0)
+        twaStr = '-' + twaStr;
+      else
+        twaStr += '-';
+      jumboTWA.setValue(twaStr);
+    });
+    events.subscribe('tws', function(val) {
+//    displayTWS.animate(val);
+      displayTWS.setValue(val);
+      displayOverview.setTWS(val);
+      jumboTWS.setValue(val.toFixed(1));
+      twsEvolution.addTWS({ "speed": val, "time": (new Date()).getTime() });
+      
+      var from = twsEvolution.getFromBoundary();
+      var to   = twsEvolution.getToBoundary();
+      
+      var dateFmt = (to - from > (3600000 * 24)) ? "d-M H:i:s" : "H:i:s"; // "d-M-Y H:i:s._ Z";
+      document.getElementById("life-span").innerHTML = twsEvolution.getBufferLength() + " pts<br>" + 
+                                                       "From " + (new Date(from)).format(dateFmt) + "<br>" + 
+                                                       "To " + (new Date(to)).format(dateFmt) + "<br>" + 
+                                                    // "(" + twsEvolution.getLifeSpan() + ")" + "<br>" + 
+                                                       twsEvolution.getLifeSpanFormatted();
+    });
+    events.subscribe('wt', function(val) {
+//    thermometer.animate(val);
+      thermometer.setValue(val);
+    });
+    events.subscribe('at', function(val) {
+//    athermometer.animate(val);
+      athermometer.setValue(val);
+    });
+    events.subscribe('volt', function(val) {
+//    displayVolt.animate(val);
+      displayVolt.setValue(val);
+    });
+    events.subscribe('prmsl', function(val) {
+//    displayBaro.animate(val);
+      displayBaro.setValue(val);
+    });
+    events.subscribe('hum', function(val) {
+//    displayHum.animate(val);
+      displayHum.setValue(val);
+    });
+    events.subscribe('aws', function(val) {
+      displayAW.setAWS(val);
+      displayOverview.setAWS(val);
+      jumboAWS.setValue(val.toFixed(1));
+    });
+    events.subscribe('awa', function(val) {
+      var awa = val.toFixed(0);
+//    displayAW.animate(awa);
+      displayAW.setValue(val);
+      displayOverview.setAWA(val);
+      var awaStr = lpad(Math.round(Math.abs(val)).toString(), '0', 3);
+      if (awa < 0)
+        awaStr = '-' + awaStr;
+      else
+        awaStr += '-';
+      jumboAWA.setValue(awaStr);
+    });
+    events.subscribe('cdr', function(val) {
+      var cdr = val.toFixed(0);
+      displayOverview.setCDR(val);
+      jumboCDR.setValue(lpad(Math.round(val).toString(), '0', 3));
+      displayCurrent.setValue(val);
+    });
+    events.subscribe('cog', function(val) {
+      var cog = val.toFixed(0);
+      displayOverview.setCOG(val);
+      jumboCOG.setValue(lpad(Math.round(val).toString(), '0', 3));
+    });
+    events.subscribe('cmg', function(val) {
+      displayOverview.setCMG(val);
+    });
+    events.subscribe('leeway', function(val) {
+      displayOverview.setLeeway(val);
+      var lwyStr = lpad(Math.round(Math.abs(val)).toString(), '0', 2);
+      if (val < 0)
+        lwyStr = '-' + lwyStr;
+      else
+        lwyStr += '-';
+      jumboLWY.setValue(lwyStr);
+    });
+    events.subscribe('csp', function(val) {
+      var csp = val.toFixed(2);
+      displayOverview.setCSP(val);
+      jumboCSP.setValue(csp);
+      displayCurrent.setCurrentSpeed(val);
+    });
+    events.subscribe('sog', function(val) {
+      val = val.toFixed(2);
+      displayOverview.setSOG(val);
+      jumboSOG.setValue(val);
+    });
+    events.subscribe('wp', function(val) {
+      displayOverview.setB2WP(val.b2wp.toFixed(0));
+      document.getElementById("display.vmg.waypoint").disabled = false;
+      document.getElementById("display.vmg.waypoint").value = val.to_wp;
+      document.getElementById("display.vmg.waypoint").nextSibling.textContent = "VMG to " + val.to_wp;
+    });
+    events.subscribe('vmg', function(val) {
+      var vmg = 0;
+      if (document.getElementById("display.vmg.wind").checked)
+        vmg = val.onwind.toFixed(2);
+      else
+        vmg = val.onwp.toFixed(2);
+      displayOverview.setVMG(vmg);
+      jumboVMG.setValue(vmg);
+    });
+    events.subscribe('perf', function(val) {
+      var perf = val.toFixed(2);
+      displayPRF.setValue(val);
+      displayOverview.setPerf(perf);
+    });
   };
   
+  var displayErr = function(err) {
+    if (err !== undefined)
+      document.getElementById("err-mess").innerHTML = err;
+  };
+
   window.onresize = function()
   {
 //  console.log("Re-evaluating window size");
@@ -237,26 +433,12 @@
     </script>
   </head>
   <body bgcolor="black">
-    <!--table width="98%">
-      <tr>
-        <td><h2 style="font-size: 12pt; font-family: Verdana, Arial, Helvetica, Geneva, Swiss, SunSans-Regular">NMEA Console Data</h2></td>
-      </tr>
-    </table-->
     <small>
-      <!--button id="showDisplays" onclick="showDisplays();">Displays</button>&nbsp;
-      <button id="showOverview" onclick="showOverview();">Overview</button>&nbsp;
-      <button id="showMap" onclick="showMap();">Map</button>&nbsp;
-      <button id="showTWDEvolution" onclick="showTWDEvolution();">TW Evolution</button-->
-
       <span id="showDisplays" onclick="showDisplays();" class="selectedButton">Displays</span>
       <span id="showOverview" onclick="showOverview();" class="unselectedButton">Overview</span>
       <span id="showMap" onclick="showMap();" class="unselectedButton">Map</span>
       <span id="showTWDEvolution" onclick="showTWDEvolution();" class="unselectedButton">TW Evolution</span>
     </small>
-    <!--select id="theme-select" onchange="changeTheme();">
-      <option value="black" selected>Black theme</option>
-      <option value="white">White theme</option>
-    </select-->
     &nbsp;&nbsp;Color Scheme:&nbsp;
     <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
     <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
@@ -303,11 +485,11 @@
           <td align="center" valign="top" rowspan="1">
             <canvas id="twsCanvas" width="240" height="220" title="True Wind Speed in knots"></canvas>
           </td>
-          <td align="center" valign="top" rowspan="2">
-            <div id="display-wt-div" style="display: inline;"><canvas id="tmpCanvas" width="100" height="240" title="Water Temperature in Celcius"></canvas></div>
+          <td align="center" valign="top" rowspan="1">
+            <div id="display-wt-div"><canvas id="tmpCanvas" width="100" height="240" title="Water Temperature in Celcius"></canvas></div>
           </td>
           <td align="center" valign="top" rowspan="2">
-            <div id="display-at-div" style="display: inline;"><canvas id="atmpCanvas" width="100" height="240" title="Air Temperature in Celcius"></canvas></div>
+            <div id="display-at-div"><canvas id="atmpCanvas" width="100" height="240" title="Air Temperature in Celcius"></canvas></div>
           </td>
         </tr>
         <tr>
@@ -325,7 +507,7 @@
         </tr>
         <tr>
           <td align="center" valign="top">
-            <div id="display-gdt-div" style="display: none;">
+            <div id="display-gdt-div" style="display: none'">
               <canvas id="dateCanvas" width="216" height="40" title="GPS Date"></canvas>
               <br>
               <canvas id="timeCanvas" width="192" height="40" title="GPS Time"></canvas>
@@ -454,9 +636,9 @@
         <table align="center" cellspacing="10">
           <tr>
             <td valign="top" align="right">
-              <button onclick="resetTWBuffer();">Reset All</button>
+              <button onclick="resetTWBuffer();" style="margin-bottom: 10px;">Reset All</button>
               <br>
-              <button onclick="resetTW2Buffer();">Drop Oldest Half</button>
+              <button onclick="resetTW2Buffer();" style="margin-bottom: 10px;">Drop Oldest Half</button>
               <br>
               <div id="life-span">
               </div>
@@ -472,6 +654,7 @@
       </p>
     </div>
     <div id="err-mess"></div>
-    <address>The HTML5 Console</address>
+    <address><span id="console-type"></span></address>
   </body>
 </html>
+  

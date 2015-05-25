@@ -8,3 +8,16 @@ body
 {
   color: white;
 }
+
+.dataTitle {
+  text-align: center;
+}
+.dataValue {
+  text-align: center;
+  font-size: 80px;
+  color: blue;
+  padding:5px; 
+  border-radius:5px; 
+  border:1px solid #CCC; 
+  margin-top:10px;
+}

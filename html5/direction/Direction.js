@@ -29,7 +29,7 @@ var directionColorConfigBlack =
   bgColor:           'black',
   digitColor:        'cyan',
   withGradient:      true,
-  displayBackgroundGradient: { from: 'black', to: 'LightGrey' },
+  displayBackgroundGradient: { from: 'DarkGrey', to: 'black' },
   shadowColor:       'black',
   outlineColor:      'DarkGrey',
   majorTickColor:    'red',

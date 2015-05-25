@@ -212,14 +212,13 @@ function Pluviometer(cName, minValue, maxValue, majorTicks, minorTicks)
     tubeLength -= 10;    
 
     // Liquid in the tube
-    var dv = Math.min(displayValue, maxValue);
     context.beginPath();
     x = (canvas.width / 2) - (0.9 * (tubeWidth / 2));
     y = bottomTube;
     context.moveTo(x, y);   // bottom left
     x = (canvas.width / 2) + (0.9 * (tubeWidth / 2));
     context.lineTo(x, y);   // bottom right
-    y = bottomTube - ((tubeLength) * (dv / (maxValue - minValue)));
+    y = bottomTube - ((tubeLength) * (displayValue / (maxValue - minValue)));
     context.lineTo(x, y);   // top right
     x = (canvas.width / 2) - (0.9 * (tubeWidth / 2));
     context.lineTo(x, y);   // top left

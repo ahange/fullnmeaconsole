@@ -16,7 +16,7 @@ var roseColorConfigWhite =
 var roseColorConfigBlack = 
 {
   bgColor:           'black',
-  digitColor:        '#ffffd0',
+  digitColor:        'red', //'#ffffd0',
   withGradient:      true,
   displayBackgroundGradient: { from: 'black', to: 'gray' },
   tickColor:         'white',

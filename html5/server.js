@@ -38,7 +38,7 @@ if (typeof String.prototype.endsWith != 'function')
 function handler (req, res) 
 {
   var respContent = "";
-  if (verbose)
+  if (verbose === true)
   {
     console.log("Speaking HTTP from " + __dirname);
     console.log("Server received an HTTP Request:\n" + req.method + "\n" + req.url + "\n-------------");
@@ -64,8 +64,8 @@ function handler (req, res)
                     res.writeHead(500);
                     return res.end('Error loading ' + resource);
                   }
-                  if (verbose)
-                    console.log("Read resource content:\n---------------\n" + data + "\n--------------");
+               // if (verbose)
+               //   console.log("Read resource content:\n---------------\n" + data + "\n--------------");
                   var contentType = "text/html";
                   if (resource.endsWith(".css"))
                     contentType = "text/css";
@@ -81,11 +81,14 @@ function handler (req, res)
                     contentType = "image/gif";
                   else if (resource.endsWith(".png"))
                     contentType = "image/png";
+                  else if (resource.endsWith(".ico"))
+                    contentType = "image/ico";
 
                   res.writeHead(200, {'Content-Type': contentType});
               //  console.log('Data is ' + typeof(data));
                   if (resource.endsWith(".jpg") || 
                       resource.endsWith(".gif") ||
+                      resource.endsWith(".ico") ||
                       resource.endsWith(".png"))
                   {
                 //  res.writeHead(200, {'Content-Type': 'image/gif' });
@@ -122,6 +125,7 @@ function handler (req, res)
   else
   {
     console.log("Unmanaged request: [" + req.url + "]");
+  //console.log(">>> " + JSON.stringify(req, null, 2));
     respContent = "Response from " + req.url;
     res.writeHead(404, {'Content-Type': 'text/plain'});
     res.end(); // respContent);
