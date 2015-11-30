@@ -34,11 +34,11 @@ public class DirectionEvolutionPanel
      extends JPanel  
 {
 
-  private DirectionEvolutionDisplay hdgLoggingDisplay = new DirectionEvolutionDisplay("HDG", "Heading", 36);
-  private DirectionEvolutionDisplay cogLoggingDisplay = new DirectionEvolutionDisplay("COG", "Course Over Ground", 36);
-  private DirectionEvolutionDisplay awaLoggingDisplay = new DirectionEvolutionDisplay("AWA", "Apparent Wind Angle", 36, HeadingPanel.MINUS_180_TO_PLUS_180);
+  private DirectionEvolutionDisplay hdgLoggingDisplay = new DirectionEvolutionDisplay("HDG",    "Heading", 36);
+  private DirectionEvolutionDisplay cogLoggingDisplay = new DirectionEvolutionDisplay("COG",    "Course Over Ground", 36);
+  private DirectionEvolutionDisplay awaLoggingDisplay = new DirectionEvolutionDisplay("AWA",    "Apparent Wind Angle", 36, HeadingPanel.MINUS_180_TO_PLUS_180);
   private DirectionEvolutionDisplay twdLoggingDisplay = new DirectionEvolutionDisplay("WINDIR", "True Wind Direction", 36); // "TWD"
-  private DirectionEvolutionDisplay cdrLoggingDisplay = new DirectionEvolutionDisplay("CDR", "Current Direction", 36);
+  private DirectionEvolutionDisplay cdrLoggingDisplay = new DirectionEvolutionDisplay("CDR",    "Current Direction", 36);
   
   private FlowLayout flowLayout1 = new FlowLayout();
 

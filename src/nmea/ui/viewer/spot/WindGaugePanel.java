@@ -15,6 +15,8 @@ import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
+import ocss.nmea.utils.WindUtils;
+
 @SuppressWarnings("serial")
 public class WindGaugePanel
   extends JPanel
@@ -23,6 +25,11 @@ public class WindGaugePanel
   float max = -1f;
   
   private boolean glossy = true;
+  
+  private final static int FIVE_KNOTS_STEP = 0;
+  private final static int BEAUFORT_SCALE  = 1;
+  
+  private final static int DISPLAY_OPTION = BEAUFORT_SCALE;  
 
   public void setGlossy(boolean glossy)
   {
@@ -125,39 +132,59 @@ public class WindGaugePanel
     final int STEP      = 5;
     
     int w = this.getWidth();
-    int h = (int)((STEP - 2) * ((float)gaugeHeight / (float)MAX_RANGE));
-    int i = 0;
-    int y = 0;
-    boolean last = false;
-    boolean go   = true;
-    while (tws > 0f && !Double.isInfinite(tws) && go)
+    if (DISPLAY_OPTION == BEAUFORT_SCALE)
     {
-      int colorIdx = (int)(i / 5d);
-      if (colorIdx > colorfield.length - 1) colorIdx = colorfield.length - 1;
-      Color c = colorfield[colorIdx];
-//      if (i > 5)
-//        c = Color.yellow;
-//      if (i > 25)
-//        c = Color.orange;
-//      if (i > 40)
-//        c = Color.red;
-//      if (i > 50)
-//        c = new Color(125, 2, 15); // Dark red
-      gr.setColor(c);
-      gr.fillRoundRect(1,
-                       gaugeHeight - y - STEP - 1,
-                       w - 2, 
-                       h,
-                       2, 2);
-      i += STEP;
-      y += (h + 2);
-      if (i > tws) 
-      {        
-        if (!last)
-          last = true;
-        else
+      int beaufort = WindUtils.getBeaufort(tws);
+      int h = Math.round((float)gaugeHeight / 12f);
+      for (int b = 1; b <= beaufort; b++)
+      {
+        int colorIdx = b - 1;
+        if (colorIdx > colorfield.length - 1) colorIdx = colorfield.length - 1;
+        Color c = colorfield[colorIdx];
+        gr.setColor(c);
+        gr.fillRoundRect(2,
+                         gaugeHeight - (b * h) - b - 1,
+                         w - 3, 
+                         h,
+                         3, 3);
+      }    
+    }
+    else if (DISPLAY_OPTION == FIVE_KNOTS_STEP)
+    {
+      int h = (int)((STEP - 2) * ((float)gaugeHeight / (float)MAX_RANGE));
+      int i = 0;
+      int y = 0;
+      boolean last = false;
+      boolean go   = true;
+      while (tws > 0f && !Double.isInfinite(tws) && go)
+      {
+        int colorIdx = (int)(i / 5d);
+        if (colorIdx > colorfield.length - 1) colorIdx = colorfield.length - 1;
+        Color c = colorfield[colorIdx];
+  //      if (i > 5)
+  //        c = Color.yellow;
+  //      if (i > 25)
+  //        c = Color.orange;
+  //      if (i > 40)
+  //        c = Color.red;
+  //      if (i > 50)
+  //        c = new Color(125, 2, 15); // Dark red
+        gr.setColor(c);
+        gr.fillRoundRect(1,
+                         gaugeHeight - y - STEP - 1,
+                         w - 2, 
+                         h,
+                         2, 2);
+        i += STEP;
+        y += (h + 2);
+        if (i > tws) 
+        {        
+          if (!last)
+            last = true;
+          else
+            go = false;
           go = false;
-        go = false;
+        }
       }
     }
     if (max != -1)
@@ -171,6 +198,12 @@ public class WindGaugePanel
   public void setTws(float tws)
   {
     this.tws = tws;
+  }
+
+  @Override
+  public void setToolTipText(String string)
+  {
+    super.setToolTipText("One notch is " + (DISPLAY_OPTION == BEAUFORT_SCALE?"1 Beaufort":"5 knots"));
   }
 
   public float getTws()

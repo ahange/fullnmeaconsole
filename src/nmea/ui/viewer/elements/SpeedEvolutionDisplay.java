@@ -13,6 +13,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ import ocss.nmea.parser.Speed;
 
 public class SpeedEvolutionDisplay
      extends JPanel  
-  implements MouseMotionListener
+  implements MouseMotionListener, MouseListener
 {
   private Font digiFont = null;
   private Color displayColor = Color.green;
@@ -123,6 +124,7 @@ public class SpeedEvolutionDisplay
 //  resize(jumboFontSize);
 
     addMouseMotionListener(this);
+    addMouseListener(this);
 
     this.setSize(new Dimension(600, 100));
     this.setPreferredSize(new Dimension(600, 100));
@@ -295,10 +297,44 @@ public class SpeedEvolutionDisplay
     this.df21 = df21;
   }
 
+  @Override
+  public void mouseClicked(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mousePressed(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseExited(MouseEvent mouseEvent)
+  {
+    plotDot = null;
+  }
+
+  @Override
   public void mouseDragged(MouseEvent e)
   {
   }
 
+  private PlotDot plotDot = null; 
+
+  @Override
   public void mouseMoved(MouseEvent e)
   {
     Point mouse = e.getPoint();
@@ -344,7 +380,12 @@ public class SpeedEvolutionDisplay
           str += "<hr>";
       }
       if (!onMini && !onMaxi)
+      {
         str += ("index " + index + ":<b>" + justTime.format(date) + "</b>, Value:<font color='red'><b>" + df21.format(aldd.get(index).getValue()) + unit + "</b></font>");
+        plotDot = new PlotDot();
+        plotDot.time  = aldd.get(index).getDate();
+        plotDot.value = aldd.get(index).getValue();        
+      }
       str += "</html>";
       this.setToolTipText(str);
 //    System.out.println("Array Size:" + aldd.size() + ", Pos:" + index);
@@ -483,6 +524,18 @@ public class SpeedEvolutionDisplay
           int strWidth  = gr.getFontMetrics(gr.getFont()).stringWidth(str);
           gr.setColor(Color.cyan);
           gr.drawString(str, this.getWidth() - strWidth - 2,  jumboFontSize + 2);
+          if (plotDot != null)
+          {
+            int w_ = dataPanel.getWidth();
+            double stepH_ = ((double)w_ / (double)length);
+            int x_ = (int)((plotDot.time.getTime() - begin) * stepH_);
+            int y_ = h - (int)((plotDot.value - min) * stepV);
+            gr.fillOval(x_-3, y_-3, 6, 6);
+            Stroke dotted = new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1f, new float[] {3f}, 0f);
+            ((Graphics2D)gr).setStroke(dotted);  
+            gr.drawLine(x_, 0, x_, this.getHeight());
+            ((Graphics2D)gr).setStroke(origStroke);  
+          }
         }
         else
           gr.drawString("No Data...", 10, this.getHeight() - 20);
@@ -525,4 +578,9 @@ public class SpeedEvolutionDisplay
     }
   }
   
+  private static class PlotDot
+  {
+    Date time = null;
+    double value = 0D;
+  }
 }

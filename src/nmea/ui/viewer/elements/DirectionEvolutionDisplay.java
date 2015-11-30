@@ -17,6 +17,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import nmea.server.constants.Constants;
 
 public class DirectionEvolutionDisplay
      extends JPanel
-  implements MouseMotionListener
+  implements MouseMotionListener, MouseListener
 {
   private Font digiFont = null;
   private Color displayColor = Color.green;
@@ -124,6 +125,8 @@ public class DirectionEvolutionDisplay
 
     //  resize(jumboFontSize);
     addMouseMotionListener(this);
+    addMouseListener(this);
+    
     this.setSize(new Dimension(DEFAULT_WIDTH, 400));
     this.setPreferredSize(new Dimension(DEFAULT_WIDTH, 400));
     if (toolTipText != null)
@@ -285,10 +288,44 @@ public class DirectionEvolutionDisplay
     this.df3 = df21;
   }
 
+  @Override
   public void mouseDragged(MouseEvent e)
   {
   }
 
+  private PlotDot plotDot = null; 
+
+  @Override
+  public void mouseClicked(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mousePressed(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent mouseEvent)
+  {
+    // TODO Implement this method
+  }
+
+  @Override
+  public void mouseExited(MouseEvent mouseEvent)
+  {
+    plotDot = null;
+  }
+  
+  @Override
   public void mouseMoved(MouseEvent e)
   {
     Point mouse = e.getPoint();
@@ -296,13 +333,16 @@ public class DirectionEvolutionDisplay
     int arraySize = aldd.size();
     if (mouse.y <= height && arraySize > 0)
     {
-      int index = (int)(((double)mouse.y / (double)height) * (double)arraySize);
+      int index = (int)Math.round(((double)mouse.y / (double)height) * (double)arraySize);
+  //  System.out.println(">>>>>>>>>>>>>>>>>>>");
+  //  System.out.println("MouseY:" + mouse.y + ", H:" + height + ", AS:" + arraySize + ", idx:" + index);
+  //  System.out.println(">>>>>>>>>>>>>>>>>>>");
       index -= 1;
       while (index >= aldd.size())
         index--;
       if (index == -1)
         return;
-        
+      
       try
       {
         Date date = aldd.get(index).getDate();
@@ -315,6 +355,10 @@ public class DirectionEvolutionDisplay
         str += ("index " + index + ":<br><b>" + date.toString() + "</b><br><font color='red'><b>" + df3.format(aldd.get(index).getValue()) + unit + "</b></font>");
         str += "</html>";
         this.setToolTipText(str);
+
+        plotDot = new PlotDot();
+        plotDot.time  = aldd.get(index).getDate();
+        plotDot.value = aldd.get(index).getValue();        
       }
       catch (Exception ex)
       {
@@ -322,6 +366,8 @@ public class DirectionEvolutionDisplay
       }
 //    System.out.println("Array Size:" + aldd.size() + ", Pos:" + index);
     }
+    else
+      plotDot = null;
   }
 
   private class DatedData
@@ -457,10 +503,27 @@ public class DirectionEvolutionDisplay
           gr.setColor(Color.yellow);
           gr.drawString(str, (this.getWidth() / 2) - (strWidth / 2),  this.getHeight() - 3);
           headingPanel.setHdg((int)Math.round(aldd.get(aldd.size() - 1).getValue()));
+          //
+          if (plotDot != null)
+          {
+            int x = (int) ((plotDot.value - min) * stepH);
+            int y = (int) ((plotDot.time.getTime() - begin) * stepV);
+            gr.fillOval(x-3, y-3, 6, 6);
+            Stroke dotted = new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1f, new float[] {3f}, 0f);
+            ((Graphics2D)gr).setStroke(dotted);  
+            gr.drawLine(0, y, this.getWidth(), y);
+            ((Graphics2D)gr).setStroke(origStroke);  
+          }
         }
         else
           gr.drawString("No Data...", 10, this.getHeight() - 20);
       }
     }
+  }
+  
+  private static class PlotDot
+  {
+    Date time = null;
+    double value = 0D;
   }
 }
