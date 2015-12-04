@@ -41,13 +41,13 @@ var analogDisplayColorConfigWhite =
 var analogDisplayColorConfigBlack = 
 {
   bgColor:           'black',
-  digitColor:        'cyan',
+  digitColor:        'white', // 'cyan',
   withGradient:      true,
-  displayBackgroundGradient: { from: 'black', to: 'LightGrey' },
+  displayBackgroundGradient: { from: 'DarkGrey', to: 'black' },
   shadowColor:       'black',
   outlineColor:      'DarkGrey',
-  majorTickColor:    'red',
-  minorTickColor:    'red',
+  majorTickColor:    'white',
+  minorTickColor:    'white',
   valueColor:        'red',
   valueOutlineColor: 'black',
   valueNbDecimal:    1,
@@ -58,7 +58,7 @@ var analogDisplayColorConfigBlack =
   knobOutlineColor:  'blue',
   font:              'Arial'
 };
-var analogDisplayColorConfig = analogDisplayColorConfigWhite; // analogDisplayColorConfigBlack; // White is the default
+var analogDisplayColorConfig = analogDisplayColorConfigBlack; // analogDisplayColorConfigBlack; // White is the default
 
 function AnalogDisplay(cName,                     // Canvas Name
                        dSize,                     // Display radius

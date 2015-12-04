@@ -27,13 +27,13 @@ var directionColorConfigWhite =
 var directionColorConfigBlack = 
 {
   bgColor:           'black',
-  digitColor:        'cyan',
+  digitColor:        'white', // 'cyan',
   withGradient:      true,
-  displayBackgroundGradient: { from: 'black', to: 'LightGrey' },
+  displayBackgroundGradient: { from: 'DarkGrey', to: 'black' },
   shadowColor:       'black',
   outlineColor:      'DarkGrey',
-  majorTickColor:    'red',
-  minorTickColor:    'red',
+  majorTickColor:    'white',
+  minorTickColor:    'white',
   valueColor:        'red',
   valueOutlineColor: 'black',
   valueNbDecimal:    0,
@@ -44,7 +44,7 @@ var directionColorConfigBlack =
   knobOutlineColor:  'blue',
   font:              'Arial'
 };
-var directionColorConfig = directionColorConfigWhite; 
+var directionColorConfig = directionColorConfigBlack; 
 
 function Direction(cName, dSize, majorTicks, minorTicks, withRose)
 {
