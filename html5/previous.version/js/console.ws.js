@@ -28,7 +28,7 @@ var init = function()
   displayTime     = new TimeDisplay('timeCanvas', 60);
   displayBaro     = new AnalogDisplay('baroCanvas', 100, 1040,  10,  1, true, 40, 980);
   displayHum      = new AnalogDisplay('humCanvas',  100,  100,  10,  1, true, 40);
-  displayVolt     = new AnalogDisplay('voltCanvas', 100,   16,   1,  0.25, true, 40, 8);
+  displayVolt     = new AnalogDisplay('voltCanvas', 100,   16,   1,  0.25, true, 40);
   
   displayOverview = new BoatOverview('overviewCanvas');
   

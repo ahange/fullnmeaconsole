@@ -2,14 +2,24 @@
  * @author Olivier Le Diouris
  */
 var displayBSP, displayLog, displayPRF, displayTWD, displayTWS, thermometer, athermometer, displayHDG, rose, 
-    displayBaro, displayHum, displayVolt, displayDate, displayTime, displayOverview, displayOverview,
+    displayBaro, displayHum, displayVolt, displayDate, displayTime, displayOverview,
     jumboBSP, jumboHDG, jumboTWD, jumboLWY, jumboAWA, jumboTWA, jumboAWS, jumboTWS, jumboCOG, jumboCDR, jumboSOG, jumboCSP, jumboVMG,
-    displayAW, displayCurrent,
+    displayAW, displayCurrent, 
     twdEvolution, twsEvolution;
     
 var jumboList = [];
 
 var editing = false;
+
+// TODO from Config file/request
+var displayOptions = {
+  displayWT: true,
+  displayAT: true,
+  displayGDT: true,
+  displayPRMSL: true,
+  displayHUM: true,
+  displayVOLT: true
+};
 
 var init = function() 
 {
@@ -52,45 +62,8 @@ var init = function()
   displayCurrent  = new CurrentDisplay('currentDisplayCanvas', 80, 45, 5);
   twdEvolution    = new TWDEvolution('twdEvolutionCanvas');
   twsEvolution    = new TWSEvolution('twsEvolutionCanvas');
-
-  var connection;
-
-  // if user is running mozilla then use it's built-in WebSocket
-  //  window.WebSocket = window.WebSocket || window.MozWebSocket;  // TODO otherwise, fall back
-  var ws = window.WebSocket || window.MozWebSocket;  // TODO otherwise, fall back
-
-  // if browser doesn't support WebSocket, just show some notification and exit
-  //  if (!window.WebSocket) 
-
-  if (!ws) 
-  {
-    alert('Sorry, but your browser does not support WebSockets.'); // TODO Fallback
-    return;
-  }
-
-  // open connection
-  var rootUri = "ws://" + (document.location.hostname === "" ? "localhost" : document.location.hostname) + ":" +
-                          (document.location.port === "" ? "9876" : document.location.port);
-  console.log(rootUri);
-  connection = new WebSocket(rootUri); // 'ws://localhost:9876');
-
-  connection.onopen = function () 
-  {
-    console.log('Connected.')
-  };
-
-  connection.onerror = function (error) 
-  {
-    // just in there were some problems with connection...
-    alert('Sorry, but there is some problem with your connection or the server is down.');
-  };
-
-  connection.onmessage = function (message) 
-  {
-//  console.log('onmessage:' + JSON.stringify(message.data));
-    var data = JSON.parse(message.data);
-    setValues(data);
-  };
+  
+  var interval = setInterval(function() { pingNMEAConsole(); }, 1000);
 };
 
 var changeBorder = function(b) 
@@ -150,39 +123,98 @@ var reloadMap = function()
   iframe.contentWindow.location.reload();
 };
 
-var setValues = function(doc)
+/**
+ * Sample data:
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet href="nmea-xml-html.xsl" type="text/xsl"?>
+<!DOCTYPE data [
+ <!ENTITY deg     "&#176;">
+]>
+<data>
+  <wtemp>26.50</wtemp>
+  <gps-time>1290377286000</gps-time>
+  <gps-time-fmt>14:08:06 UTC</gps-time-fmt>
+  <d2wp>561.7</d2wp>
+  <cog>223</cog>
+  <leeway>0</leeway>
+  <csp>0.79</csp>
+  <bsp>6.83</bsp>
+  <lat>-9.10875</lat>
+  <lng>-140.20975</lng>
+  <pos>S  09&deg;06.53' / W 140&deg;12.59'</pos>
+  <b2wp>230</b2wp>
+  <xte>3.0</xte>
+  <gps-date-time>1290377286000</gps-date-time>
+  <gps-date-time-fmt>21 Nov 2010 14:08:06 UTC</gps-date-time-fmt>
+  <D>10</D>
+  <aws>14.60</aws>
+  <cdr>140</cdr>
+  <to-wp>RANGI   </to-wp>
+  <tws>18.96</tws>
+  <dbt>1.60</dbt>
+  <log>3013.0</log>
+  <awa>-126</awa>
+  <hdg>229</hdg>
+  <cmg>227</cmg>
+  <twd>85</twd>
+  <prmsl>0.0</prmsl>
+  <d>-1</d>
+  <atemp>0.00</atemp>
+  <twa>-143</twa>
+  <day-log>12.3</day-log>
+  <sog>6.91</sog>
+  <gps-solar-date>1290343635660</gps-solar-date>
+  <vmg-wind>-5.11</vmg-wind>
+  <vmg-wp>6.85</vmg-wp>
+  <perf>1.03</perf>
+  <bsp-factor>1.0</bsp-factor>
+  <aws-factor>1.0</aws-factor>
+  <awa-offset>0.0</awa-offset>
+  <hdg-offset>0.0</hdg-offset>
+  <max-leeway>15.0</max-leeway>
+  <dev-file>D:\OlivSoft\all-scripts\dp_2011_04_15.csv</dev-file>
+  <default-decl>15.0</default-decl>
+  <damping>30</damping>
+  <polar-file>D:\OlivSoft\all-scripts\polars\CheoyLee42.polar-coeff</polar-file>
+  <polar-speed-factor>0.8</polar-speed-factor>
+</data>
+*/
+var pingNMEAConsole = function()
 {
   try
   {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/", false);
+    xhr.send();
+    doc = xhr.responseXML; 
     var errMess = "";
     
-    var json = doc;
-
-    var displayWT    = (json.displayWT !== undefined ? json.displayWT : true);
-    var displayAT    = (json.displayAT !== undefined ? json.displayAT : true);
-    var displayGDT   = (json.displayGDT !== undefined ? json.displayGDT : false);
-    var displayPRMSL = (json.displayPRMSL !== undefined ? json.displayPRMSL : false);
-    var displayHUM   = (json.displayHUM !== undefined ? json.displayHUM : false);
-    var displayVOLT  = (json.displayVOLT !== undefined ? json.displayVOLT : false);
-
-    document.getElementById("display-wt-div").style.display = (displayWT === true ? 'inline' : 'none');
-    document.getElementById("display-wt-title").style.display = (displayWT === true ? 'inline' : 'none');
-    document.getElementById("display-at-div").style.display = (displayAT === true ? 'inline' : 'none');
-    document.getElementById("display-at-title").style.display = (displayAT === true ? 'inline' : 'none');
-    document.getElementById("display-gdt-div").style.display = (displayGDT === true ? 'inline' : 'none');
-    document.getElementById("display-gdt-title").style.display = (displayGDT === true ? 'inline' : 'none');
-    document.getElementById("display-prmsl-div").style.display = (displayPRMSL === true ? 'inline' : 'none');
-    document.getElementById("display-prmsl-title").style.display = (displayPRMSL === true ? 'inline' : 'none');
-    document.getElementById("display-hum-div").style.display = (displayHUM === true ? 'inline' : 'none');
-    document.getElementById("display-hum-title").style.display = (displayHUM === true ? 'inline' : 'none');
-    document.getElementById("display-volt-div").style.display = (displayVOLT === true ? 'inline' : 'none');
-    document.getElementById("display-volt-title").style.display = (displayVOLT === true ? 'inline' : 'none');
+    var showWT = true, showAT = false, showGDT = false, showPRMSL = false, showHUM = false, showVOLT = false;
+    try { showWT = ("true" === doc.getElementsByTagName("Display_Web_Water_Temp")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showAT = ("true" === doc.getElementsByTagName("Display_Web_Air_Temp")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showGDT = ("true" === doc.getElementsByTagName("Display_Web_GPSDateTime")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showPRMSL = ("true" === doc.getElementsByTagName("Display_Web_PRMSL")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showHUM = ("true" === doc.getElementsByTagName("Display_Web_HUM")[0].childNodes[0].nodeValue); } catch (err) {}
+    try { showVOLT = ("true" === doc.getElementsByTagName("Display_Web_Volt")[0].childNodes[0].nodeValue); } catch (err) {}
+    
+    document.getElementById("display-wt-div").style.display = (showWT === true ? 'inline' : 'none');
+    document.getElementById("display-wt-title").style.display = (showWT === true ? 'inline' : 'none');
+    document.getElementById("display-at-div").style.display = (showAT === true ? 'inline' : 'none');
+    document.getElementById("display-at-title").style.display = (showAT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-div").style.display = (showGDT === true ? 'inline' : 'none');
+    document.getElementById("display-gdt-title").style.display = (showGDT === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-div").style.display = (showPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-prmsl-title").style.display = (showPRMSL === true ? 'inline' : 'none');
+    document.getElementById("display-hum-div").style.display = (showHUM === true ? 'inline' : 'none');
+    document.getElementById("display-hum-title").style.display = (showHUM === true ? 'inline' : 'none');
+    document.getElementById("display-volt-div").style.display = (showVOLT === true ? 'inline' : 'none');
+    document.getElementById("display-volt-title").style.display = (showVOLT === true ? 'inline' : 'none');
 
     try
     {
-      var latitude  = parseFloat(json.lat);
+      var latitude  = parseFloat(doc.getElementsByTagName("lat")[0].childNodes[0].nodeValue);
 //    console.log("latitude:" + latitude)
-      var longitude = parseFloat(json.lng);
+      var longitude = parseFloat(doc.getElementsByTagName("lng")[0].childNodes[0].nodeValue);
 //    console.log("Pt:" + latitude + ", " + longitude);
       var label = "Your position";
       // Plot the station on the map
@@ -197,7 +229,7 @@ var setValues = function(doc)
     // Displays
     try
     {
-      var bsp = parseFloat(json.bsp.toFixed(2));
+      var bsp = parseFloat(doc.getElementsByTagName("bsp")[0].childNodes[0].nodeValue);
 //    displayBSP.animate(bsp);
       displayBSP.setValue(bsp);
       displayOverview.setBSP(bsp);
@@ -209,9 +241,9 @@ var setValues = function(doc)
 //    displayBSP.animate(0.0);
       displayBSP.setValue(0.0);
     }
-     try
+    try
     {
-      var log = parseFloat(json.log);
+      var log = parseFloat(doc.getElementsByTagName("log")[0].childNodes[0].nodeValue);
       displayLog.setValue(log);
    // document.getElementById("log").innerText = log.toFixed(0);
     }
@@ -222,7 +254,7 @@ var setValues = function(doc)
     }
     try
     {
-      var gpsDate = parseFloat(json.gpstime);
+      var gpsDate = parseFloat(doc.getElementsByTagName("gps-date-time")[0].childNodes[0].nodeValue);
       displayDate.setValue(gpsDate);
       displayTime.setValue(gpsDate);
    // document.getElementById("log").innerText = log.toFixed(0);
@@ -232,9 +264,10 @@ var setValues = function(doc)
       console.log("GPS Date problem...")
       errMess += ((errMess.length > 0?"\n":"") + "Problem with GPS Date...:" + err);
     }    
+
     try
     {
-      var hdg = parseFloat(json.hdg.toFixed(0)) % 360;
+      var hdg = parseFloat(doc.getElementsByTagName("hdg")[0].childNodes[0].nodeValue) % 360;
 //    displayHDG.animate(hdg);
       displayHDG.setValue(hdg);
       displayOverview.setHDG(hdg);
@@ -249,7 +282,7 @@ var setValues = function(doc)
     }
     try
     {
-      var twd = parseFloat(json.twd.toFixed(0)) % 360;
+      var twd = parseFloat(doc.getElementsByTagName("twd")[0].childNodes[0].nodeValue) % 360;
 //    displayTWD.animate(twd);
       displayTWD.setValue(twd);
       displayOverview.setTWD(twd);
@@ -264,7 +297,7 @@ var setValues = function(doc)
     }
     try
     {
-      var twa = parseFloat(json.twa.toFixed(0));
+      var twa = parseFloat(doc.getElementsByTagName("twa")[0].childNodes[0].nodeValue);
       displayOverview.setTWA(twa);
       var twaStr = lpad(Math.round(Math.abs(twa)).toString(), '0', 3);
       if (twa < 0)
@@ -281,7 +314,7 @@ var setValues = function(doc)
     }
     try
     {
-      var tws = parseFloat(json.tws.toFixed(2));
+      var tws = parseFloat(doc.getElementsByTagName("tws")[0].childNodes[0].nodeValue);
 //    displayTWS.animate(tws);
       displayTWS.setValue(tws);
       displayOverview.setTWS(tws);
@@ -304,21 +337,25 @@ var setValues = function(doc)
 //    displayTWS.animate(0.0);
       displayTWS.setValue(0.0);
     }
+
+    if (showWT)
+    {
+      try
+      {
+        var waterTemp = parseFloat(doc.getElementsByTagName("wtemp")[0].childNodes[0].nodeValue);
+//      thermometer.animate(waterTemp);
+        thermometer.setValue(waterTemp);
+      }
+      catch (err)
+      {
+        errMess += ((errMess.length > 0?"\n":"") + "Problem with water temperature...");
+//      thermometer.animate(0.0);
+        thermometer.setValue(0.0);
+      }
+    }
     try
     {
-      var waterTemp = parseFloat(json.wtemp.toFixed(1));
-//    thermometer.animate(waterTemp);
-      thermometer.setValue(waterTemp);
-    }
-    catch (err)
-    {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with water temperature...");
-//    thermometer.animate(0.0);
-      thermometer.setValue(0.0);
-    }
-    try
-    {
-      var airTemp = parseFloat(json.atemp.toFixed(1));
+      var airTemp = parseFloat(doc.getElementsByTagName("atemp")[0].childNodes[0].nodeValue);
 //    athermometer.animate(airTemp);
       athermometer.setValue(airTemp);
     }
@@ -328,13 +365,12 @@ var setValues = function(doc)
 //    athermometer.animate(0.0);
       athermometer.setValue(0.0);
     }
+    // Battery_Voltage, Relative_Humidity, Barometric_Pressure
     try
     {
-      var voltage = parseFloat(json.bat);
-      if (voltage > 0) {
-//      displayVolt.animate(airTemp);
-        displayVolt.setValue(voltage);
-      }
+      var voltage = parseFloat(doc.getElementsByTagName("Battery_Voltage")[0].childNodes[0].nodeValue);
+//    displayVolt.animate(airTemp);
+      displayVolt.setValue(voltage);
     }
     catch (err)
     {
@@ -344,11 +380,9 @@ var setValues = function(doc)
     }
     try
     {
-      var baro = parseFloat(json.prmsl);
-      if (baro != 0) {
-//      displayBaro.animate(baro);
-        displayBaro.setValue(baro);
-      }
+      var baro = parseFloat(doc.getElementsByTagName("prmsl")[0].childNodes[0].nodeValue);
+//    displayBaro.animate(airTemp);
+      displayBaro.setValue(baro);
     }
     catch (err)
     {
@@ -358,11 +392,9 @@ var setValues = function(doc)
     }
     try
     {
-      var hum = parseFloat(json.hum);
-      if (hum > 0) {
-//      displayHum.animate(airTemp);
-        displayHum.setValue(hum);
-      }
+      var hum = parseFloat(doc.getElementsByTagName("Relative_Humidity")[0].childNodes[0].nodeValue);
+//    displayHum.animate(airTemp);
+      displayHum.setValue(hum);
     }
     catch (err)
     {
@@ -372,7 +404,7 @@ var setValues = function(doc)
     }
     try
     {
-      var aws = parseFloat(json.aws.toFixed(2));
+      var aws = parseFloat(doc.getElementsByTagName("aws")[0].childNodes[0].nodeValue);
       displayAW.setAWS(aws);
       displayOverview.setAWS(aws);
       jumboAWS.setValue(aws.toFixed(1));
@@ -383,7 +415,7 @@ var setValues = function(doc)
     }    
     try
     {
-      var awa = parseFloat(json.awa.toFixed(0));
+      var awa = parseFloat(doc.getElementsByTagName("awa")[0].childNodes[0].nodeValue);
 //    displayAW.animate(awa);
       displayAW.setValue(awa);
       displayOverview.setAWA(awa);
@@ -400,7 +432,7 @@ var setValues = function(doc)
     }    
     try
     {
-      var cdr = parseFloat(json.cdr.toFixed(0));
+      var cdr = parseFloat(doc.getElementsByTagName("cdr")[0].childNodes[0].nodeValue);
       displayOverview.setCDR(cdr);
       jumboCDR.setValue(lpad(Math.round(cdr).toString(), '0', 3));
       displayCurrent.setValue(cdr);
@@ -412,7 +444,7 @@ var setValues = function(doc)
       
     try
     {
-      var cog = parseFloat(json.cog.toFixed(0));
+      var cog = parseFloat(doc.getElementsByTagName("cog")[0].childNodes[0].nodeValue);
       displayOverview.setCOG(cog);
       jumboCOG.setValue(lpad(Math.round(cog).toString(), '0', 3));
     }
@@ -422,7 +454,7 @@ var setValues = function(doc)
     }
     try
     {
-      var cmg = parseFloat(json.cmg.toFixed(0));
+      var cmg = parseFloat(doc.getElementsByTagName("cmg")[0].childNodes[0].nodeValue);
       displayOverview.setCMG(cmg);
 //    jumboCMG.setValue(lpad(Math.round(cmg).toString(), '0', 3));
     }
@@ -432,7 +464,7 @@ var setValues = function(doc)
     }      
     try
     {
-      var leeway = parseFloat(json.leeway.toFixed(2));
+      var leeway = parseFloat(doc.getElementsByTagName("leeway")[0].childNodes[0].nodeValue);
       displayOverview.setLeeway(leeway);
       var lwyStr = lpad(Math.round(Math.abs(leeway)).toString(), '0', 2);
       if (leeway < 0)
@@ -443,11 +475,11 @@ var setValues = function(doc)
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with Leway...");
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with Leeway...");
     }      
     try
     {
-      var csp = parseFloat(json.csp.toFixed(2));
+      var csp = parseFloat(doc.getElementsByTagName("csp")[0].childNodes[0].nodeValue);
       displayOverview.setCSP(csp);
       jumboCSP.setValue(csp.toFixed(2));
       displayCurrent.setCurrentSpeed(csp);
@@ -458,7 +490,7 @@ var setValues = function(doc)
     }    
     try
     {
-      var sog = parseFloat(json.sog.toFixed(2));
+      var sog = parseFloat(doc.getElementsByTagName("sog")[0].childNodes[0].nodeValue);
       displayOverview.setSOG(sog);
       jumboSOG.setValue(sog.toFixed(2));
     }
@@ -466,11 +498,11 @@ var setValues = function(doc)
     {
       errMess += ((errMess.length > 0?"\n":"") + "Problem with SOG...");
     }
-    // towp, vmgwind, vmgwp, b2wp
+    // to-wp, vmg-wind, vmg-wp, b2wp
     try
     {
-      var to_wp = json.towp;
-      var b2wp = parseFloat(json.b2wp.toFixed(0));
+      var to_wp = doc.getElementsByTagName("to-wp")[0].childNodes[0].nodeValue;
+      var b2wp = parseFloat(doc.getElementsByTagName("b2wp")[0].childNodes[0].nodeValue);
       displayOverview.setB2WP(b2wp);
       document.getElementById("display.vmg.waypoint").disabled = false;
       document.getElementById("display.vmg.waypoint").value = to_wp;
@@ -486,9 +518,9 @@ var setValues = function(doc)
     {
       var vmg = 0;
       if (document.getElementById("display.vmg.wind").checked)
-        vmg = parseFloat(json.vmgwind.toFixed(2));
+        vmg = parseFloat(doc.getElementsByTagName("vmg-wind")[0].childNodes[0].nodeValue);
       else
-        vmg = parseFloat(json.vmgwp.toFixed(2));
+        vmg = parseFloat(doc.getElementsByTagName("vmg-wp")[0].childNodes[0].nodeValue);
       displayOverview.setVMG(vmg);
       jumboVMG.setValue(vmg.toFixed(2));
     }
@@ -500,7 +532,7 @@ var setValues = function(doc)
     // perf
     try
     {
-      var perf = parseFloat(json.perf.toFixed(2));
+      var perf = parseFloat(doc.getElementsByTagName("perf")[0].childNodes[0].nodeValue);
       perf *= 100;
       displayPRF.setValue(perf);
       displayOverview.setPerf(perf);

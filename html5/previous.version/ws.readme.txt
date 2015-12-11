@@ -1,0 +1,19 @@
+The first time
+==============
+You need to have node.js installed
+From the html5 directory, run 
+Prompt> npm install websocket
+
+to set a proxy: npm config set http-proxy="http://yourproxy:port"
+to reset: npm config rm http-proxy (proxy, and https-proxy as well).
+
+To start the websocket server
+=============================
+Prompt> node server.js
+
+Then run the console with the WebSocket User Exit, by adding the following prm to the command line:
+-ue:olivsoftdesktopuserexits.ws.WSUserExit
+
+The WebSocket console can be reached from http://localhost:9876/data/console.ws.html
+
+You need to have java_websocket.jar and json.jar in the all-3rd-party directory

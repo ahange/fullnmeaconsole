@@ -4,7 +4,7 @@ body
   font-weight: bold; 
   font-size: 12pt; 
   font-family: Verdana, Helvetica, Geneva, Swiss, SunSans-Regular; 
-/*background-image: url(carbon.fiber.1280x800.png); */
+ #background-image: url(carbon.fiber.1280x800.png); 
   background-position: top left; 
   background-repeat: repeat 
 }

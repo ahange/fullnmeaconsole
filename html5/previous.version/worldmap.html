@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta charset="windows-1252"></meta-->
+    <meta charset="iso-8859-1"></meta>
+    <title>world.map</title>
+    <script type="text/javascript" src="worldmap.js"></script>
+    <script type="text/javascript">
+// <![CDATA[    
+      window.onload = function() 
+      {
+        clear('mapCanvas');
+        drawWorldMap('mapCanvas');
+        addCanvasListener('mapCanvas');
+      };     
+// ]]>      
+    </script>
+  </head>
+  <body>
+    <canvas id="mapCanvas" width="800" height="400"></canvas>
+  </body>
+</html>

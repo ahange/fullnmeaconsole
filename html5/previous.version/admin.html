@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta charset="windows-1252"-->
+    <!--meta charset="iso-8859-1"-->
+    <!--meta charset="utf-8"-->
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <title>NMEA Console Data - Admin</title>
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css"/>
+    <style type="text/css">
+      .displayCanvas {
+        border: 1px solid #9C9898;
+        opacity:0.75;
+      }
+    </style>
+    <link rel="stylesheet" href="css/black.css" type="text/css" id="theme"/>
+    <script type="text/javascript" src="js/date.proto.js"></script>
+    <!--script type="text/javascript" src="js/widgets/AnalogDisplay.js"></script-->
+    <script type="text/javascript" src="js/admin.console.js"></script>
+    <script type="text/javascript">
+  
+  window.onload = function()
+  {
+    init();
+    // Get query string prms
+    var theme = getQSPrm('theme');
+    if (theme !== undefined) {
+      changeTheme(theme);
+      var rb = document.getElementsByName('theme');
+      for (var i=0; i<rb.length; i++) {
+        rb[i].checked = (rb[i].value === theme);
+      }
+    }
+  };
+  
+  var getQSPrm = function(prm)
+  {
+    var value;
+    var loc = document.location.toString();
+    if (loc.indexOf("?") > -1) {
+      var qs = loc.substring(loc.indexOf("?") + 1);
+      var prms = qs.split('&');
+      for (var i=0; i<prms.length; i++) {
+        var nv = prms[i].split('=');
+        if (nv.length === 2) {
+          if (nv[0] === prm) {
+            return nv[1];
+          }
+        }
+      }
+    }
+    return value;
+  };      
+
+  var changeTheme = function(value)
+  {
+    var cssLink = document.getElementById("theme");
+    var selected;
+    if (value === undefined) {
+      var themeList = document.getElementById("theme-select");
+      selected = themeList.options[themeList.selectedIndex].value;
+    } else {
+      selected = value;
+    }
+    cssLink.href = 'css/' + selected + '.css';
+  };
+  
+    </script>
+  </head>
+  <body bgcolor="black">
+    <h2>Web Console Preferences &amp; Administration</h2>
+    &nbsp;&nbsp;Color Scheme:&nbsp;
+    <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
+    <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
+    <hr>
+    <div id="calibration-prms" style="display: inline;">
+      <input type="checkbox" id="edit.prms" onchange="editDisplay();">Edit</input>      
+      <hr>
+      <table border="0" cellspacing="10">
+        <tr>
+          <td valign="top">
+            <table>
+              <tr><td>BSP Factor</td><td><div id="bsp-factor"></div></td></tr>
+              <tr><td>AWS Factor</td><td><div id="aws-factor"></div></td></tr>
+              <tr><td>AWA Offset</td><td><div id="awa-offset"></div></td></tr>
+              <tr><td>HDG Offset</td><td><div id="hdg-offset"></div></td></tr>
+              <tr><td>Max Leeway</td><td><div id="max-leeway"></div></td></tr>
+              <tr><td>Deviation File</td><td><div id="dev-file"></div></td></tr>
+              <tr><td>Default Decl.</td><td><div id="def-decl"></div></td></tr>
+              <tr><td>Damping</td><td><div id="damping"></div></td></tr>
+              <tr><td>Polar file</td><td><div id="polar-file"></div></td></tr>
+              <tr><td>Polar Speed Factor</td><td><div id="polar-speed-factor"></div></td></tr>
+            </table>
+          </td>
+          <td valign="top">
+            <table>
+              <tr><td>Display Water Temperature</td><td><div id="display-wt"></div></td></tr>
+              <tr><td>Display Air Temperature</td><td><div id="display-at"></div></td></tr>
+              <tr><td>Display GPS Date &amp; Time</td><td><div id="display-gdt"></div></td></tr>
+              <tr><td>Display Atmospheric Pressure</td><td><div id="display-prmsl"></div></td></tr>
+              <tr><td>Display Relative Humidity</td><td><div id="display-hum"></div></td></tr>
+              <tr><td>Display Battery Voltage</td><td><div id="display-volt"></div></td></tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <button disabled="true" id="update.button" onclick="updatePrms();">Update</button>
+      <hr>
+    </div>
+    <div id="err-mess"></div>
+    <address>The HTML5 Admin Console</address>
+  </body>
+</html>

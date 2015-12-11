@@ -228,7 +228,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-  //  errMess += ((errMess.length > 0?"\n":"") + "Problem with AWS...");
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with AWS...");
     }    
     try
     {
@@ -237,7 +237,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-  //  errMess += ((errMess.length > 0?"\n":"") + "Problem with AWA...");
+      errMess += ((errMess.length > 0?"\n":"") + "Problem with AWA...");
     }    
     try
     {

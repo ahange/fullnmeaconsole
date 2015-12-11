@@ -12,22 +12,22 @@
         border: 1px solid #9C9898;
         opacity:0.75;
       }
-      
+
       .selectedButton {
-        padding:5px; 
-        border-radius:5px; 
-        border:1px solid gray; 
-        margin-top:10px; 
-        border-bottom: none;
+      	padding:5px; 
+      	border-radius:5px; 
+      	border:1px solid gray; 
+      	margin-top:10px; 
+      	border-bottom: none;
         font-size: 18px;
       }
 
       .unselectedButton {
-        padding:5px; 
-        border-radius:5px; 
-        border:1px solid gray; 
-        margin-top:10px; 
-        border-bottom: 1px solid gray;
+      	padding:5px; 
+      	border-radius:5px; 
+      	border:1px solid gray; 
+      	margin-top:10px; 
+      	border-bottom: 1px solid gray;
         font-size: 12px;
       }
     </style>
@@ -48,9 +48,9 @@
     <script type="text/javascript" src="js/widgets/TimeDisplay.js"></script>
     <script type="text/javascript" src="js/widgets/TWDEvolution.js"></script>
     <script type="text/javascript" src="js/widgets/TWSEvolution.js"></script>
-    <script type="text/javascript" src="js/console.ws.js"></script>
+    <script type="text/javascript" src="js/console.js"></script>
     <script type="text/javascript">
-    
+
   var getQSPrm = function(prm)
   {
     var value;
@@ -85,19 +85,19 @@
 
   var showMap = function()
   {
-    setup(false, false, true, false);
+  	setup(false, false, true, false);
   };  
   var showDisplays = function()
   {
-    setup(true, false, false, false);
+  	setup(true, false, false, false);
   };  
   var showOverview = function()
   {
-    setup(false, true, false, false);
+  	setup(false, true, false, false);
   };    
   var showTWDEvolution = function()
   {
-    setup(false, false, false, true);
+  	setup(false, false, false, true);
   };
   
   window.onload = function()
@@ -303,11 +303,11 @@
           <td align="center" valign="top" rowspan="1">
             <canvas id="twsCanvas" width="240" height="220" title="True Wind Speed in knots"></canvas>
           </td>
-          <td align="center" valign="top" rowspan="1">
-            <div id="display-wt-div"><canvas id="tmpCanvas" width="100" height="240" title="Water Temperature in Celcius"></canvas></div>
+          <td align="center" valign="top" rowspan="2">
+            <div id="display-wt-div" style="display: inline;"><canvas id="tmpCanvas" width="100" height="240" title="Water Temperature in Celcius"></canvas></div>
           </td>
           <td align="center" valign="top" rowspan="2">
-            <div id="display-at-div"><canvas id="atmpCanvas" width="100" height="240" title="Air Temperature in Celcius"></canvas></div>
+            <div id="display-at-div" style="display: inline;"><canvas id="atmpCanvas" width="100" height="240" title="Air Temperature in Celcius"></canvas></div>
           </td>
         </tr>
         <tr>
@@ -325,7 +325,7 @@
         </tr>
         <tr>
           <td align="center" valign="top">
-            <div id="display-gdt-div" style="display: none'">
+            <div id="display-gdt-div" style="display: none;">
               <canvas id="dateCanvas" width="216" height="40" title="GPS Date"></canvas>
               <br>
               <canvas id="timeCanvas" width="192" height="40" title="GPS Time"></canvas>
@@ -454,9 +454,9 @@
         <table align="center" cellspacing="10">
           <tr>
             <td valign="top" align="right">
-              <button onclick="resetTWBuffer();" style="margin-bottom: 10px;">Reset All</button>
+              <button onclick="resetTWBuffer();">Reset All</button>
               <br>
-              <button onclick="resetTW2Buffer();" style="margin-bottom: 10px;">Drop Oldest Half</button>
+              <button onclick="resetTW2Buffer();">Drop Oldest Half</button>
               <br>
               <div id="life-span">
               </div>
@@ -472,7 +472,6 @@
       </p>
     </div>
     <div id="err-mess"></div>
-    <address>The HTML5 WebSocket Console</address>
+    <address>The HTML5 Console</address>
   </body>
 </html>
-  

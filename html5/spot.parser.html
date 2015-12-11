@@ -496,7 +496,7 @@ Line.prototype.drawArrowhead = function(ctx, x, y, radians)
             </tr-->  
           </table>
         </td>
-        <td rowspan="6" valign="top"><div id="map" style="width: 400px; height: 530px;"></div></td>
+        <td rowspan="7" valign="top"><div id="map" style="width: 400px; height: 530px;"></div></td>
       </tr>
       <tr>
         <td align="left" colspan="4">
@@ -539,6 +539,11 @@ Line.prototype.drawArrowhead = function(ctx, x, y, radians)
           &nbsp;<input type="checkbox" id="utc-display" onchange="javascript:onDataChange();">UTC
           <br>
           <canvas id="graphCanvas" width="650" height="200" class="displayCanvas"/>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4">      
+          <small>Warning: The wind arrows indicate the direction <b><i>in which</i></b> the wind is blowing</small>
         </td>
       </tr>
       <tr>

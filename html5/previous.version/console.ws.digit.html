@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta charset="windows-1252"-->
+    <!--meta charset="iso-8859-1"-->
+    <!--meta charset="utf-8"-->
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <title>NMEA Console Data</title>
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css"/>
+    <link rel="stylesheet" href="css/black.css" type="text/css" id="theme"/>
+    <script type="text/javascript" src="js/date.proto.js"></script>
+    <script type="text/javascript" src="js/pub.sub.js"></script>
+    <script type="text/javascript" src="js/ajax.manager.js"></script>
+    <script type="text/javascript" src="js/ws.manager.js"></script>
+    <script type="text/javascript">
+    
+  var getQSPrm = function(prm)
+  {
+    var value;
+    var loc = document.location.toString();
+    if (loc.indexOf("?") > -1) {
+      var qs = loc.substring(loc.indexOf("?") + 1);
+      var prms = qs.split('&');
+      for (var i=0; i<prms.length; i++) {
+        var nv = prms[i].split('=');
+        if (nv.length === 2) {
+          if (nv[0] === prm) {
+            return nv[1];
+          }
+        }
+      }
+    }
+    return value;
+  };      
+
+  var LATITUDE  = 0;
+  var LONGITUDE = 1;
+
+  var toDMS = function(val, flavor) {
+    var str = "";
+    var value = val;
+    if (val < 0) {
+      value = -val;
+      str = (flavor === LATITUDE ? "S" : "W");
+    } else {
+      str = (flavor === LATITUDE ? "N" : "E");
+    }
+    var deg = Math.floor(value).toFixed(0);
+    str += (" " + deg + "&deg;");
+    var min = (value - deg) * 60;
+    str += (min.toFixed(2) + "'");
+    return str;
+  };
+
+  var flavor = 'Ajax'; // Default
+
+  window.onload = function()
+  {
+    var type = getQSPrm('type');
+    if (type === 'WS') {
+      initWS();
+      flavor = 'WebSocket';
+    } else {
+      initAjax();
+    }
+    document.getElementById("console-type").innerHTML = 'The HTML5 ' + flavor + ' Digital Console.';
+//  console.log("Evaluating window size");
+    var theme = getQSPrm('theme');
+    if (theme !== undefined) {
+      changeTheme(theme);
+      var rb = document.getElementsByName('theme');
+      for (var i=0; i<rb.length; i++) {
+        rb[i].checked = (rb[i].value === theme);
+      }
+    }
+    // Set data listeners
+    events.subscribe('pos', function(val) {
+      document.getElementById("lat").innerHTML = toDMS(val.lat, LATITUDE);
+      document.getElementById("lng").innerHTML = toDMS(val.lng, LONGITUDE);
+    });
+    events.subscribe('bsp', function(val) {
+      document.getElementById("bsp").innerHTML = val.toFixed(2);
+    });
+    events.subscribe('log', function(val) {
+      document.getElementById("log").innerHTML = val.toFixed(0);
+    });
+    events.subscribe('hdg', function(val) {
+      document.getElementById("hdg").innerHTML = Math.round(val).toFixed(0) + "&deg;";
+    });
+    events.subscribe('twd', function(val) {
+      document.getElementById("twd").innerHTML = Math.round(val).toFixed(0) + "&deg;";
+    });
+    events.subscribe('tws', function(val) {
+      document.getElementById("tws").innerHTML = val.toFixed(1);
+    });
+    events.subscribe('wt', function(val) {
+      document.getElementById("wt").innerHTML = val.toFixed(1) + "&deg;";
+    });
+    events.subscribe('at', function(val) {
+      document.getElementById("at").innerHTML = val.toFixed(1) + "&deg;";
+    });
+    events.subscribe('volt', function(val) {
+      document.getElementById("volt").innerHTML = val.toFixed(2);
+    });
+    events.subscribe('prmsl', function(val) {
+      document.getElementById("prmsl").innerHTML = val.toFixed(0);
+    });
+    events.subscribe('hum', function(val) {
+      document.getElementById("hum").innerHTML = val.toFixed(1);
+    });
+    events.subscribe('perf', function(val) {
+      document.getElementById("perf").innerHTML = val.toFixed(1);
+    });
+    events.subscribe('csp', function(val) {
+      document.getElementById("csp").innerHTML = val.toFixed(2) + " kt";
+    });
+    events.subscribe('cdr', function(val) {
+      document.getElementById("cdr").innerHTML = val.toFixed(0) + "&deg;";
+    });
+    events.subscribe('gps-time', function(val) {
+      document.getElementById("gpsdate").innerHTML = (new Date(val)).format("d-M-Y H:i:s._ Z");
+    });
+  };
+
+  var displayErr = function(err) {
+    if (err !== undefined)
+      document.getElementById("err-mess").innerHTML = err;
+  };
+  
+  var changeTheme = function(value)
+  {
+    var cssLink = document.getElementById("theme");
+    var selected;
+    if (value === undefined) {
+      var themeList = document.getElementById("theme-select");
+      selected = themeList.options[themeList.selectedIndex].value;
+    } else {
+      selected = value;
+    }
+    cssLink.href = 'css/' + selected + '.css';
+  };
+  
+    </script>
+  </head>
+  <body bgcolor="black">
+    &nbsp;&nbsp;Color Scheme:&nbsp;
+    <input type="radio" name="theme" value="black" checked onclick="changeTheme(this.value);">Night&nbsp;
+    <input type="radio" name="theme" value="white" onclick="changeTheme(this.value);">Day&nbsp;
+    <hr>
+    <table cellspacing="10" style="margin: auto;">
+      <tr>
+        <td class="dataTitle">Speed kt</td>
+        <td class="dataTitle">Heading</td>
+        <td class="dataTitle">Wind Dir</td>
+        <td class="dataTitle">Wind Speed kt</td>
+        <td class="dataTitle">Water &deg;</td>
+        <td class="dataTitle">Air &deg;</td>
+      </tr>
+      <tr>
+        <td class="dataValue"><div id="bsp"></div></td>
+        <td class="dataValue"><div id="hdg"></div></td>
+        <td class="dataValue"><div id="twd"></div></td>
+        <td class="dataValue"><div id="tws"></div></td>
+        <td class="dataValue"><div id="wt"></div></td>
+        <td class="dataValue"><div id="at"></div></td>
+      </tr>
+      <tr>
+        <td class="dataTitle">Log nm</td>
+        <td class="dataTitle">Perf %</td>
+        <td class="dataTitle">PRMSL hPa</td>
+        <td class="dataTitle">Humidity %</td>
+        <td class="dataTitle">Voltage V</td>
+        <td class="dataTitle">Current</td>
+      </tr>
+      <tr>
+        <td class="dataValue"><div id="log"></div></td>
+        <td class="dataValue"><div id="perf"></div></td>
+        <td class="dataValue"><div id="prmsl"></div></td>
+        <td class="dataValue"><div id="hum"></div></td>
+        <td class="dataValue"><div id="volt"></div></td>
+        <td class="dataValue">
+          <div id="csp" style="font-size: 40px;"></div>
+          <div id="cdr" style="font-size: 40px;"></div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3" class="dataValue" style="text-align: left;"><div id="lat"></div></td>
+        <td colspan="3" class="dataValue" style="text-align: left;"><div id="lng"></div></td>
+      </tr>
+      <tr>
+        <td colspan="6" class="dataValue" style="text-align: left;"><div id="gpsdate"></div></td>
+      </tr>
+    </table>
+    <div id="err-mess"></div>
+    <hr>
+    <address><span id="console-type"></span></address>
+  </body>
+</html>
+  
