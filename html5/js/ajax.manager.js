@@ -98,7 +98,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with position...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "position");
     }
     // Displays
     try
@@ -108,7 +108,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with boat speed...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "boat speed");
     }
     try
     {
@@ -117,7 +117,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with log...:" + err);
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "log (" + err + ")");
     }
     try
     {
@@ -126,7 +126,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with GPS Date...:" + err);
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "GPS Date (" + err + ")");
     }    
 
     try
@@ -136,7 +136,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with heading...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "heading");
     }
     try
     {
@@ -145,7 +145,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWD...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "TWD");
     }
     try
     {
@@ -154,7 +154,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWA...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "TWA");
     }
     try
     {
@@ -163,7 +163,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with TWS...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "TWS");
     }
 
     if (showWT)
@@ -175,7 +175,7 @@ var pingNMEAConsole = function()
       }
       catch (err)
       {
-        errMess += ((errMess.length > 0?"\n":"") + "Problem with water temperature...");
+        errMess += ((errMess.length > 0?", ":"Problem with ") + "water temperature");
       }
     }
     try
@@ -185,7 +185,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with air temperature...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "air temperature");
     }
     // Battery_Voltage, Relative_Humidity, Barometric_Pressure
     try
@@ -197,7 +197,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Battery_Voltage...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "Battery_Voltage");
     }
     try
     {
@@ -208,7 +208,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with air PRMSL...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "PRMSL");
     }
     try
     {
@@ -219,7 +219,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with air Relative_Humidity...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "Relative_Humidity");
     }
     try
     {
@@ -228,7 +228,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-  //  errMess += ((errMess.length > 0?"\n":"") + "Problem with AWS...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "AWS");
     }    
     try
     {
@@ -237,7 +237,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-  //  errMess += ((errMess.length > 0?"\n":"") + "Problem with AWA...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "AWA");
     }    
     try
     {
@@ -246,7 +246,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with CDR...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "CDR");
     }
       
     try
@@ -256,7 +256,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with COG...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "COG");
     }
     try
     {
@@ -265,7 +265,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with CMG...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "CMG");
     }      
     try
     {
@@ -274,7 +274,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with Leeway...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "Leeway");
     }      
     try
     {
@@ -283,7 +283,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with CSP...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "CSP");
     }    
     try
     {
@@ -292,7 +292,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with SOG...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "SOG");
     }
     // to-wp, vmg-wind, vmg-wp, b2wp
     try
@@ -314,7 +314,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with VMG...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "VMG");
     }
     
     // perf
@@ -326,7 +326,7 @@ var pingNMEAConsole = function()
     }
     catch (err)
     {
-      errMess += ((errMess.length > 0?"\n":"") + "Problem with Perf...");
+      errMess += ((errMess.length > 0?", ":"Problem with ") + "Perf");
     }
     
     if (errMess !== undefined)
