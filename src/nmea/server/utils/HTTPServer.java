@@ -81,7 +81,7 @@ public class HTTPServer
 
   private final static int XML_OUTPUT  = 0;
   private final static int TEXT_OUTPUT = 1;
-  private final static int JSON_OUTPUT = 2;
+  private final static int JSON_OUTPUT = 2; // TODO Add a csv format
 
 //private DecimalFormat decimalFmt = new DecimalFormat("#0.00");
 //private DecimalFormat integerFmt = new DecimalFormat("##0");
@@ -274,9 +274,17 @@ public class HTTPServer
 //              System.out.println(line);
 //              System.out.println("---- Update Prms request ---");
               }
-              else if (line.startsWith("POST / ") || line.startsWith("GET / "))
+              else if (line.startsWith("POST / ") || line.startsWith("GET / ") || line.startsWith("POST /all") || line.startsWith("GET /all"))
               {
-                // All data in XML Format                
+                // All data in XML Format          
+                String fmtPrm = getPrm(line, "fmt");
+                if (fmtPrm != null)
+                {
+                  if ("json".equals(fmtPrm))
+                    output = JSON_OUTPUT;
+                  else if ("xml".equals(fmtPrm))
+                    output = XML_OUTPUT;
+                }
               }
               else if (line.startsWith("GET /")) // display a file
               {
@@ -296,6 +304,15 @@ public class HTTPServer
             if (!help && !latitude && !longitude && !latitudefmt && !longitudefmt && !localtime && !lnginhours && !hdg && 
                 !hdm && !bsp && !sog && !cog && !awa && !aws && !twa && !tws && !prmUpdate)
             {
+              String fmtPrm = getPrm(line, "fmt");
+              if (fmtPrm != null)
+              {
+                if ("json".equals(fmtPrm))
+                  output = JSON_OUTPUT;
+                else if ("xml".equals(fmtPrm))
+                  output = XML_OUTPUT;
+              }
+              
               if (output == XML_OUTPUT)
                 contentType = "text/xml";
               if (output == JSON_OUTPUT)
@@ -446,6 +463,28 @@ public class HTTPServer
     return enabled;
   }
 
+  private static String getPrm(String query, String prmName)
+  {
+    String prmVal = null;
+    if (query != null && query.indexOf("?") > -1)
+    {
+      String queryString = query.substring(query.indexOf("?") + 1);
+      if (queryString.indexOf(" ") > -1)
+        queryString = queryString.substring(0, queryString.indexOf(" "));
+//    System.out.println("QueryString:" + queryString);
+      String[] nvPair = queryString.split("&");
+      for (String nvp : nvPair)
+      {
+        String[] nv = nvp.split("=");
+        if (nv[0].equals(prmName))
+        {
+          prmVal = nv[1];
+          break;
+        }
+      }
+    }
+    return prmVal;
+  }
   // TODO Renmove this
   private enum CacheToQSMatch
   {
@@ -1504,5 +1543,12 @@ public class HTTPServer
         }
       };
     t.start();
+  }
+  
+  public static void main_(String[] args)
+  {
+    String url = "/GET /tamere?fmt=json HTTP/1.1";
+    String fmt = getPrm(url, "fmt");
+    System.out.println("Format:" + fmt);
   }
 }
