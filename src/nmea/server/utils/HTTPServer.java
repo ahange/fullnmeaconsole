@@ -81,7 +81,7 @@ public class HTTPServer
 
   private final static int XML_OUTPUT  = 0;
   private final static int TEXT_OUTPUT = 1;
-  private final static int JSON_OUTPUT = 2; // TODO Add a csv format
+  private final static int JSON_OUTPUT = 2; // TODO Add a csv format?
 
 //private DecimalFormat decimalFmt = new DecimalFormat("#0.00");
 //private DecimalFormat integerFmt = new DecimalFormat("##0");
