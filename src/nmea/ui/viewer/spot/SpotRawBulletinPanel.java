@@ -127,6 +127,7 @@ public class SpotRawBulletinPanel
     String airmailLocation = System.getProperty("airmail.location");
     String airmailId       = System.getProperty("airmail.id");
     
+    scanAirmailInbox.setEnabled(false);
     if (airmailLocation == null) 
     {
       throw new RuntimeException("Property airmail.location not set. Please see your preferences (SailMail)");
@@ -241,6 +242,7 @@ public class SpotRawBulletinPanel
     System.out.println("Message:\n" + messContent);    
     // Put the content in the right place
     spotBulletinEditorPane.setText(messContent);
+    scanAirmailInbox.setEnabled(true);
   }  
   
   private static class InboxMessage

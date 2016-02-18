@@ -73,6 +73,7 @@ public class SpotComposerPanel
 {
   private JPanel topPanel = new JPanel();
   private final static DecimalFormat DF2 = new DecimalFormat("00");
+  private final static DecimalFormat DF34 = new DecimalFormat("#00.0000");
   private GridBagLayout gridBagLayout1 = new GridBagLayout();
   private JRadioButton gpsRadioButton = new JRadioButton();
   private JRadioButton manualPosRadioButton = new JRadioButton();
@@ -441,6 +442,10 @@ public class SpotComposerPanel
       BufferedWriter br = new BufferedWriter(new FileWriter(new File(outboxDir, messageName + ".msg")));
       br.write(messageContent);
       br.close();
+      JOptionPane.showMessageDialog(this, 
+                                    "Email has been generated", 
+                                    "AirMail SPOT request Generation", 
+                                    JOptionPane.INFORMATION_MESSAGE);
     }
     catch (Exception ex)
     {
@@ -452,9 +457,9 @@ public class SpotComposerPanel
   {
     String request = "send spot:"; // 37.5N,122.5W|5,3|PRMSL,WIND,RAIN";
     GeoPoint gp = positionPanel.getPosition();
-    request += (Double.toString(Math.abs(gp.getL())) + (gp.getL()>0?"N":"S"));
+    request += (DF34.format(Math.abs(gp.getL())) + (gp.getL()>0?"N":"S"));
     request += ",";
-    request += (Double.toString(Math.abs(gp.getG())) + (gp.getG()>0?"E":"W"));
+    request += (DF34.format(Math.abs(gp.getG())) + (gp.getG()>0?"E":"W"));
     request += "|";
     request += (String)daysComboBox.getSelectedItem();
     request += ",";
