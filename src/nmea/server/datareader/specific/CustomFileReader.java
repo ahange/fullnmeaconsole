@@ -136,6 +136,13 @@ public class CustomFileReader extends NMEAReader implements DataReader
       nbs++;
       idx = chunk.indexOf("$", idx + 1);
     }    
+    // For AIS
+    idx = chunk.indexOf("!AIVDM");
+    while (idx > -1)
+    {
+      nbs++;
+      idx = chunk.indexOf("!AIVDM", idx + "!AIVDM".length());
+    }    
     return nbs;
   }
   
@@ -165,9 +172,9 @@ public class CustomFileReader extends NMEAReader implements DataReader
   public void setTimeout(long timeout)
   { /* Not used for File Reader */  }
   
-  public static void main4test(String[] args)
+  public static void main4tests(String[] args)
   {
-    String s = "26.5,C*39$IIMWV,238,R,17.4,N,A*18$IIMWV,225,T,21.4,N,A*17$IIRMC,220712,A,0906.452,S,14012.516,W,06.6,227,211110,10,E,A*0B$IIVHW,,,220,M,06.1,N,,*63$IIVLW,03013,N,012.2,N*53$IIVWR,122,L,17.4,N,,,,*7C$IIDPT,000.9,+0.7,*49$IIGLL,0906.455,S,14012.519,W,220714,A,A*5D$IIHDG,221,,,10,E*12$IIMTW,+26.5,C*39$IIMWV,232,R,16.2,N,A*15$IIMWV,224,T,21.2,N,A*10$IIRMB,A,3.00,R,,RANGI   ,,,,,561.80,230,06.5,V,A*0F$IIRMC,220714,A,0906.455,S,14012.519,W,06.6,227,211110,10,E,A*05$IIVHW,,,221,M,06.0,N,,*63$IIVLW,03013,N,012.2,N*53$IIVWR,130,L,15.5,N,,,,*7C$IIDPT,000.9,+0.7,*49$IIGLL,0906.455,S,14012.519,W,220714,A,A*5D$IIHDG,220,,,10,E*13$IIMTW,+26.5,C*39$IIMWV,230,R,15.5,N,A*";
+    String s = "26.5,C*39$IIMWV,238,R,17.4,N,A*18!AIVDM,1,1,,A,13cie15001Qj26pRJjjSIVtr0@BS,0*02$IIMWV,225,T,21.4,N,A*17$IIRMC,220712,A,0906.452,S,14012.516,W,06.6,227,211110,10,E,A*0B$IIVHW,,,220,M,06.1,N,,*63$IIVLW,03013,N,012.2,N*53$IIVWR,122,L,17.4,N,,,,*7C$IIDPT,000.9,+0.7,*49$IIGLL,0906.455,S,14012.519,W,220714,A,A*5D$IIHDG,221,,,10,E*12$IIMTW,+26.5,C*39$IIMWV,232,R,16.2,N,A*15$IIMWV,224,T,21.2,N,A*10$IIRMB,A,3.00,R,,RANGI   ,,,,,561.80,230,06.5,V,A*0F$IIRMC,220714,A,0906.455,S,14012.519,W,06.6,227,211110,10,E,A*05$IIVHW,,,221,M,06.0,N,,*63$IIVLW,03013,N,012.2,N*53$IIVWR,130,L,15.5,N,,,,*7C$IIDPT,000.9,+0.7,*49$IIGLL,0906.455,S,14012.519,W,220714,A,A*5D$IIHDG,220,,,10,E*13$IIMTW,+26.5,C*39$IIMWV,230,R,15.5,N,A*";
     int nb = nbNMEASentences(s);
     System.out.println("Found " + nb + " sentence(s).");
   }

@@ -658,6 +658,10 @@ public class Utils
     {
       // TODO Implement
     }
+    else if ("XTE".equals(sentenceId)) // Cross Track Error
+    {
+      // TODO Implement
+    }
     else if ("XDR".equals(sentenceId)) // Transducer measurement
     {
       List<StringGenerator.XDRElement> xdr = StringParsers.parseXDR(value);
