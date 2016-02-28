@@ -643,7 +643,7 @@ public class Utils
       else
         ndc.put(NMEADataCache.DBT, new Depth(f));
     }
-    else if ("GSV".equals(sentenceId))     // Satelites in view
+    else if ("GSV".equals(sentenceId))     // Satellites in view
     {
       Map<Integer, SVData> satmap = StringParsers.parseGSV(value);
       if (satmap != null)
@@ -656,7 +656,31 @@ public class Utils
     }
     else if ("MDA".equals(sentenceId)) // Meteorological composite (Humidity, among others)
     {
-      // TODO Implement
+      StringParsers.MDA mda = StringParsers.parseMDA(value);
+      if (ndc == null)
+      {
+        if (mda.airT != null)
+          NMEAContext.getInstance().putDataCache(NMEADataCache.AIR_TEMP, new Temperature(mda.airT));
+        if (mda.waterT != null)
+          NMEAContext.getInstance().putDataCache(NMEADataCache.WATER_TEMP, new Temperature(mda.waterT));
+        if (mda.pressBar != null)
+          NMEAContext.getInstance().putDataCache(NMEADataCache.BARO_PRESS, new Pressure(mda.pressBar * 1000));
+        if (mda.relHum != null)
+          NMEAContext.getInstance().putDataCache(NMEADataCache.RELATIVE_HUMIDITY, mda.relHum);
+        // TODO More mda data...
+      }
+      else
+      {
+        if (mda.airT != null)
+          ndc.put(NMEADataCache.AIR_TEMP, new Temperature(mda.airT));
+        if (mda.waterT != null)
+          ndc.put(NMEADataCache.WATER_TEMP, new Temperature(mda.waterT));
+        if (mda.pressBar != null)
+          ndc.put(NMEADataCache.BARO_PRESS, new Pressure(mda.pressBar * 1000));
+        if (mda.relHum != null)
+          ndc.put(NMEADataCache.RELATIVE_HUMIDITY, mda.relHum);
+        // TODO More mda data...
+      }
     }
     else if ("XTE".equals(sentenceId)) // Cross Track Error
     {
