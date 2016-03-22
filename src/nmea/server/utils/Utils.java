@@ -681,6 +681,8 @@ public class Utils
           ndc.put(NMEADataCache.RELATIVE_HUMIDITY, mda.relHum);
         // TODO More mda data...
       }
+//    if (mda != null && mda.relHum != null)
+//      System.out.println("Relative Humidity:" + (mda.relHum == null? "null" : mda.relHum));
     }
     else if ("XTE".equals(sentenceId)) // Cross Track Error
     {
