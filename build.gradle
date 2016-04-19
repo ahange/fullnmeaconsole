@@ -5,9 +5,9 @@ apply plugin: 'maven'
 def userprofile = System.getenv()['USERPROFILE'] // On Windows...
 
 group = 'oliv.cool.stuff'
-version = '3.0.1.5'
+version = '4.0.0.0'
 
-//ant.setproxy(proxyhost: "$proxyHost", proxyport: "$proxyPort") //, proxyuser="user", proxypassword="password") 
+////ant.setproxy(proxyhost: "$proxyHost", proxyport: "$proxyPort") //, proxyuser="user", proxypassword="password") 
 
 sourceSets {
   main {
@@ -25,7 +25,7 @@ sourceSets {
 repositories {
   mavenCentral()
   maven { url "http://lediouris.net/maven2" }
-  maven { url "file:///" + userprofile + "/.m2/repository" }
+  mavenLocal()
 }
 
 dependencies {
