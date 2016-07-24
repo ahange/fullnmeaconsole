@@ -227,7 +227,7 @@ public class NMEAContext implements Serializable
           }
           catch (Exception ex)
           {
-            System.err.println(ex.getLocalizedMessage());
+            System.err.println("Replay File:" + ex.getLocalizedMessage());
           }
         }
       };

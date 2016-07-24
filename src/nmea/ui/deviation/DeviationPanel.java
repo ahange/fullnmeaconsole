@@ -340,7 +340,7 @@ public class DeviationPanel
       }
       catch (Exception ex)
       {
-        System.err.println(ex.getLocalizedMessage());
+        System.err.println("Deviation:" + ex.getLocalizedMessage());
       }
     }
     // Painting data points if any

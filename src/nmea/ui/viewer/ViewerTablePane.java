@@ -176,7 +176,7 @@ public class ViewerTablePane
     }
     catch (Exception ignore) 
     {
-      System.err.println(ignore.getLocalizedMessage());
+      System.err.println("ViewerTableListener:" + ignore.getLocalizedMessage());
 //    ignore.printStackTrace();
     }
 

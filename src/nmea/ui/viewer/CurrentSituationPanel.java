@@ -165,7 +165,7 @@ public class CurrentSituationPanel
               setHDG(hdg);               
               hdgPanel.setValue(hdg);
             } 
-            catch (Exception ex) { System.err.println(ex.toString()); }
+            catch (Exception ex) { System.err.println("NMEAReaderListener:" + ex.toString()); }
             try { setBSP(((Speed)cache.get(NMEADataCache.BSP)).getValue() * ((Double)cache.get(NMEADataCache.BSP_FACTOR)).doubleValue()); } catch (Exception ex) {}
             try { setSOG(((Speed)cache.get(NMEADataCache.SOG)).getValue()); } catch (Exception ex) {}
             try 
@@ -265,7 +265,7 @@ public class CurrentSituationPanel
             }
             catch (Exception ex)
             {
-              System.err.println(ex.toString());
+              System.err.println("NMEAReaderListener, dataUpdate:" + ex.toString());
             }
             // Performance
             Object obj = NMEAContext.getInstance().getCache().get(NMEADataCache.PERF);

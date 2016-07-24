@@ -105,7 +105,7 @@ public class TCPServer
         }
         catch (Exception e)
         {
-          System.err.println(e.toString());
+          System.err.println("TCP Server:" + e.toString());
           e.printStackTrace();
         }
       }

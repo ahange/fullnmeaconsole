@@ -158,12 +158,12 @@ public class CustomTCPReader extends NMEAReader implements DataReader
         else if (se instanceof ConnectException) // Et hop!
         {
           tryAgain = false;
-          System.err.println(se.getMessage());
+          System.err.println("TCP :" + se.getMessage());
         }
         else 
         {
           tryAgain = false;
-          System.err.println(se.getMessage());
+          System.err.println("TCP Socket:" + se.getMessage());
         }
         
         if (tryAgain)
@@ -262,7 +262,7 @@ public class CustomTCPReader extends NMEAReader implements DataReader
         try { ctcpr.read(); }
         catch (Exception ex)
         {
-          System.err.println(ex.getMessage());
+          System.err.println("TCP Reader:" + ex.getMessage());
           ctcpr.closeReader();
           long howMuch = 1000L;
           System.out.println("Will try to reconnect in " + Long.toString(howMuch) + "ms.");

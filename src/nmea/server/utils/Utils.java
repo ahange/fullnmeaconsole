@@ -285,7 +285,7 @@ public class Utils
     }
     catch (Exception ex)
     {
-      System.err.println(ex.getLocalizedMessage());
+      System.err.println("ReadNMEAPrm:" + ex.getLocalizedMessage());
 //    ex.printStackTrace();
     }
   }
@@ -971,7 +971,11 @@ public class Utils
     }
     catch (Exception ex)
     {
-      System.err.println(ex.toString());
+      if ("true".equals(System.getProperty("nmea.cache.verbose", "false")))
+      {
+        System.err.println("Compute and send to cache:");
+        ex.printStackTrace();
+      }
     }
   }
 
@@ -1898,7 +1902,7 @@ public class Utils
       }
       catch (Exception e)
       {
-        System.err.println(e.getLocalizedMessage());
+        System.err.println("PlaySound:" + e.getLocalizedMessage());
 //      e.printStackTrace();
 //      System.exit(1);
       }
@@ -1979,11 +1983,11 @@ public class Utils
       double hdgOffset = 0.0;
       try 
       { 
-        try { maxLeeway = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.MAX_LEEWAY)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println(npe.getLocalizedMessage()); }
-        try { awsFactor = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.AWS_FACTOR)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println(npe.getLocalizedMessage()); }
-        try { awaOffset = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.AWA_OFFSET)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println(npe.getLocalizedMessage()); }
-        try { bspFactor = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.BSP_FACTOR)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println(npe.getLocalizedMessage()); }
-        try { hdgOffset = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.HDG_OFFSET)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println(npe.getLocalizedMessage()); }
+        try { maxLeeway = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.MAX_LEEWAY)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println("MAX_LEEWAY:" + npe.getLocalizedMessage()); }
+        try { awsFactor = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.AWS_FACTOR)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println("AWS_FACTOR:" + npe.getLocalizedMessage()); }
+        try { awaOffset = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.AWA_OFFSET)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println("AWA_OFFSET:" + npe.getLocalizedMessage()); }
+        try { bspFactor = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.BSP_FACTOR)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println("BSP_FACTOR:" + npe.getLocalizedMessage()); }
+        try { hdgOffset = ((Double) NMEAContext.getInstance().getCache().get(NMEADataCache.HDG_OFFSET)).doubleValue(); } catch (NullPointerException npe) { if (speakUp) System.err.println("HDG_OFFSET:" + npe.getLocalizedMessage()); }
         ndc.put(NMEADataCache.MAX_LEEWAY, new Double(maxLeeway));
         ndc.put(NMEADataCache.AWS_FACTOR,  new Double(awsFactor));
         ndc.put(NMEADataCache.AWA_OFFSET,  new Double(awaOffset));
