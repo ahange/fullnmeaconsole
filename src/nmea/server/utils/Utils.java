@@ -1899,6 +1899,8 @@ public class Utils
       try
       {
         audioInputStream = AudioSystem.getAudioInputStream(sound);
+        if (audioInputStream == null)
+          return;
       }
       catch (Exception e)
       {
