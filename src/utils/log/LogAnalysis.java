@@ -185,7 +185,7 @@ public class LogAnalysis
     
     while (reference.getTime().before(maxDate))
     {
-      Calendar[] sunRiseSet = AstroUtil.calculateRiseSet(pos, this.timeZone, reference);
+      Object[] sunRiseSet = AstroUtil.calculateRiseSet(pos, this.timeZone, reference);
       riseAndSet.put(reference.getTimeInMillis(), sunRiseSet);
 //    System.out.println("-- Sunrise:" + sunRiseSet[0].getTime());
 //    System.out.println("-- Sunset :" + sunRiseSet[1].getTime());    
