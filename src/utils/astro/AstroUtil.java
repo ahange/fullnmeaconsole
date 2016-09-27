@@ -17,7 +17,7 @@ public class AstroUtil
    * @param reference The day you want the sun rise and set of.
    * @return Calendar 2-pos array: [SunRise, SunSet]
    */
-  public static Calendar[] calculateRiseSet(GeoPos pos, String tz, Calendar reference)
+  public static Object[] calculateRiseSet(GeoPos pos, String tz, Calendar reference)
   {
     double[] rsSun  = null;
     rsSun  = AstroComputer.sunRiseAndSet(pos.lat, pos.lng);
@@ -49,6 +49,6 @@ public class AstroUtil
     sunRise.setTimeZone(TimeZone.getTimeZone(tz));
     sunSet.setTimeZone(TimeZone.getTimeZone(tz));    
     
-    return new Calendar[] {sunRise, sunSet};
+    return new Object[] {sunRise, sunSet, rsSun[AstroComputer.RISE_Z_IDX], rsSun[AstroComputer.SET_Z_IDX]};
   }
 }
