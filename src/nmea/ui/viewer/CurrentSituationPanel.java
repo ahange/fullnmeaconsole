@@ -576,7 +576,7 @@ public class CurrentSituationPanel
 
     double maxTWS =
       Double.parseDouble(System.getProperty("max.analog.tws", "50"));
-    System.out.println("Setting MAX BSP to " + maxTWS);
+    System.out.println("Setting MAX TWS to " + maxTWS);
     twsSpeedoPanel = new SpeedoPanel(maxTWS, 1, false);
     twsSpeedoPanel.withBeaufortScale(true);
 
