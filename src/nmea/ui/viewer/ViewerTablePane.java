@@ -490,8 +490,8 @@ public class ViewerTablePane
 
       // Validation
       boolean ok = StringParsers.validCheckSum(val);
-      if (!ok)
-        System.out.println("Bad sentence:[" + val + "]");
+//    if (!ok)
+//      System.out.println("Bad sentence:\n" + val);
       data[i][VALID_POS] = Boolean.valueOf(ok);
 
       long previous = 0L;
