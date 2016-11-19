@@ -919,8 +919,8 @@ public class Utils
       cache.put(NMEADataCache.TWS, new TrueWindSpeed(tws));
       cache.put(NMEADataCache.TWD, new TrueWindDirection(twd));
     }
-    else
-      System.out.println(" NO AW !!!");
+//  else
+//    System.out.println(" NO AW !!!");
 //  System.out.println("AWS:" + aws + ", TWS:" + tws + ", AWA:" + awa + ", TWA:" + twa);
     
     double bsp = 0d;
