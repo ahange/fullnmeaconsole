@@ -11,14 +11,10 @@ import java.net.Socket;
 
 import java.net.SocketException;
 
-import java.sql.Connection;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import nmea.server.constants.Constants;
 
