@@ -310,6 +310,7 @@ public class Utils
     if (!StringParsers.validCheckSum(value))
     {
       System.out.println("Rejecting:\n" + value);
+      DumpUtil.displayDualDump(value);
       return;
     }
     // Put the last valid NMEA Value in the cache, it's for RMI broadcating protocol.
