@@ -150,9 +150,9 @@ public class SpotParser
     String spot = "Data extracted from file gfs130702-12z.grb dated 2013/07/02 16:42:32\n" + 
     "request code: spot:37.5N,122.5W|5,3|PRMSL,WIND,RAIN,LFTX\n" + 
     "\n" + 
-    "Forecast for 37°30N 122°30W (see notes below)\n" + 
+    "Forecast for 37\u00b030N 122\u00b030W (see notes below)\n" +
     "Date  Time  PRESS  WIND DIR RAIN LFTX\n" + 
-    "        utc    hPa  kts deg mm/h  °C\n" + 
+    "        utc    hPa  kts deg mm/h  ï¿½C\n" + 
     "----------- ------ ----- --- ---- ----\n" + 
     "07-03 00:00 1011.8  8.4 214  0.0 11.3\n" + 
     "07-03 03:00 1011.8  4.5 187  0.0 12.3\n" + 
