@@ -20,6 +20,7 @@ import nmea.server.constants.Constants;
 
 import nmea.server.datareader.DataReader;
 
+import nmea.server.utils.DumpUtil;
 import ocss.nmea.api.NMEAEvent;
 import ocss.nmea.api.NMEAListener;
 import ocss.nmea.api.NMEAParser;
@@ -120,8 +121,9 @@ public class CustomTCPReader extends NMEAReader implements DataReader
           for(int i = 0; i < nn; i++)
             toPrint[i] = buffer[i];
   
-          s = new String(toPrint) + NMEAParser.getEOS();
+          s = new String(toPrint).trim() + NMEAParser.getEOS();
   //      System.out.println("TCP:" + s);
+  //      DumpUtil.displayDualDump(s);
           NMEAEvent n = new NMEAEvent(this, s);
           super.fireDataRead(n);
           NMEAContext.getInstance().fireBulkDataRead(n);
@@ -234,7 +236,7 @@ public class CustomTCPReader extends NMEAReader implements DataReader
   
   public static void main(String[] args)
   {
-    String host = "192.168.1.1";
+    String host = "192.168.1.136";
     int port = 7001; // 2947
     try
     {
@@ -244,7 +246,8 @@ public class CustomTCPReader extends NMEAReader implements DataReader
         @Override
         public void dataRead(NMEAEvent nmeaEvent)
         {
-          System.out.println(nmeaEvent.getContent()); // TODO Send to the GUI?
+          DumpUtil.displayDualDump(nmeaEvent.getContent());
+//        System.out.println(nmeaEvent.getContent().trim()); // TODO Send to the GUI?
         }
       };
       ll.add(nl);
